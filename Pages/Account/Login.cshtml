@@ -1,0 +1,235 @@
+@page
+@model FerreteriaRazor.Pages.Account.LoginModel
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Iniciar sesión - Ferretería</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+</head>
+
+<body class="login-page">
+
+    <main class="login-wrapper">
+
+        <section class="login-information">
+
+            <div class="login-brand">
+                <div class="login-brand-icon">
+                    <i class="bi bi-tools"></i>
+                </div>
+
+                <span>FERRETERÍA LA LLAVE NUDA</span>
+            </div>
+
+            <div class="login-information-content">
+
+                <span class="login-label">
+                    SISTEMA MULTISUCURSAL
+                </span>
+
+                <h1>
+                    Administración segura y centralizada
+                </h1>
+
+                <p>
+                    Gestiona inventario, productos, personal y sucursales
+                    desde una única plataforma.
+                </p>
+
+                <div class="login-features">
+
+                    <div>
+                        <i class="bi bi-building"></i>
+
+                        <span>
+                            Gestión de tres sucursales
+                        </span>
+                    </div>
+
+                    <div>
+                        <i class="bi bi-people"></i>
+
+                        <span>
+                            Acceso mediante roles
+                        </span>
+                    </div>
+
+                    <div>
+                        <i class="bi bi-shield-check"></i>
+
+                        <span>
+                            Autenticación segura
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="login-form-section">
+
+            <div class="login-form-card">
+
+                <div class="login-form-header">
+                    <span>BIENVENIDO</span>
+
+                    <h2>Iniciar sesión</h2>
+
+                    <p>
+                        Introduce tus credenciales y selecciona la sucursal.
+                    </p>
+                </div>
+
+                <form method="post">
+
+                    <input type="hidden"
+                           name="returnUrl"
+                           value="@Model.ReturnUrl" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger login-validation">
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="Input.Usuario"
+                               class="form-label">
+                        </label>
+
+                        <div class="login-input-group">
+
+                            <i class="bi bi-person"></i>
+
+                            <input asp-for="Input.Usuario"
+                                   class="form-control"
+                                   placeholder="Usuario o correo"
+                                   autocomplete="username" />
+
+                        </div>
+
+                        <span asp-validation-for="Input.Usuario"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="Input.Password"
+                               class="form-label">
+                        </label>
+
+                        <div class="login-input-group">
+
+                            <i class="bi bi-lock"></i>
+
+                            <input asp-for="Input.Password"
+                                   class="form-control"
+                                   placeholder="Contraseña"
+                                   autocomplete="current-password" />
+
+                        </div>
+
+                        <span asp-validation-for="Input.Password"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="Input.SucursalId"
+                               class="form-label">
+                        </label>
+
+                        <div class="login-input-group">
+
+                            <i class="bi bi-building"></i>
+
+                            <select asp-for="Input.SucursalId"
+                                    asp-items="Model.ListaSucursales"
+                                    class="form-select">
+
+                                <option value="">
+                                    Seleccione una sucursal
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <span asp-validation-for="Input.SucursalId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="form-check mb-4">
+
+                        <input asp-for="Input.Recordarme"
+                               class="form-check-input" />
+
+                        <label asp-for="Input.Recordarme"
+                               class="form-check-label">
+                        </label>
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn login-button">
+
+                        <span>Ingresar al sistema</span>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </button>
+
+                </form>
+
+                <div class="login-security-message">
+
+                    <i class="bi bi-shield-lock"></i>
+
+                    <span>
+                        Acceso protegido mediante ASP.NET Core Identity
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <partial name="_ValidationScriptsPartial" />
+
+</body>
+</html>

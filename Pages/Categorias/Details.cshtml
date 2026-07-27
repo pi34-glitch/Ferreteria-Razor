@@ -1,0 +1,88 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Categorias.DetailsModel
+
+@{
+    ViewData["Title"] = "Detalles de categoría";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h2 class="mb-0">Detalles de categoría</h2>
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Nombre</dt>
+                        <dd class="col-sm-8">
+                            @Model.Categoria.Nombre
+                        </dd>
+
+                        <dt class="col-sm-4">Descripción</dt>
+                        <dd class="col-sm-8">
+                            @(Model.Categoria.Descripcion ?? "Sin descripción")
+                        </dd>
+
+                        <dt class="col-sm-4">Productos asociados</dt>
+                        <dd class="col-sm-8">
+                            @Model.Categoria.Productos.Count
+                        </dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Categoria.Activa)
+                            {
+                                <span class="badge bg-success">Activa</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactiva</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    @if (Model.Categoria.Productos.Any())
+                    {
+                        <hr />
+
+                        <h5>Productos de esta categoría</h5>
+
+                        <ul class="list-group mb-4">
+                            @foreach (var producto in
+                                Model.Categoria.Productos.OrderBy(p => p.Nombre))
+                            {
+                                <li class="list-group-item d-flex
+                                          justify-content-between">
+                                    <span>@producto.Nombre</span>
+
+                                    <span>
+                                        Stock: @producto.InventariosSucursales.Sum(i => i.Stock)
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-page="./Index"
+                           class="btn btn-secondary">
+                            Volver
+                        </a>
+
+                        <a asp-page="./Edit"
+                           asp-route-id="@Model.Categoria.Id"
+                           class="btn btn-warning">
+                            Editar
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

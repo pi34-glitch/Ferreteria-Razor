@@ -1,0 +1,203 @@
+@page
+@model FerreteriaRazor.Pages.Categorias.IndexModel
+
+@{
+    ViewData["Title"] = "Categorías";
+}
+
+@if (TempData["Mensaje"] is not null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm">
+        <i class="bi bi-check-circle-fill me-2"></i>
+
+        @TempData["Mensaje"]
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+    </div>
+}
+
+@if (TempData["Error"] is not null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+        @TempData["Error"]
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+    </div>
+}
+
+<div class="page-heading">
+
+    <div>
+        <h2>Categorías de productos</h2>
+
+        <p>
+            Organiza los productos de la ferretería por categoría.
+        </p>
+    </div>
+
+    <a asp-page="./Create"
+       class="btn btn-primary btn-modern">
+
+        <i class="bi bi-plus-lg"></i>
+        Nueva categoría
+
+    </a>
+
+</div>
+
+<div class="content-card">
+
+    @if (!Model.Categorias.Any())
+    {
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+                <i class="bi bi-tags"></i>
+            </div>
+
+            <h3>No hay categorías registradas</h3>
+
+            <p>
+                Crea una categoría para comenzar a organizar tus productos.
+            </p>
+
+            <a asp-page="./Create"
+               class="btn btn-primary btn-modern">
+
+                <i class="bi bi-plus-lg"></i>
+                Registrar categoría
+
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-modern align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Descripción</th>
+                        <th>Productos</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var categoria in Model.Categorias)
+                    {
+                        <tr>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <div class="brand-icon"
+                                         style="
+                                            width: 42px;
+                                            height: 42px;
+                                            font-size: 18px;
+                                            border-radius: 12px;">
+
+                                        <i class="bi bi-tag-fill"></i>
+
+                                    </div>
+
+                                    <strong>
+                                        @categoria.Nombre
+                                    </strong>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="text-muted">
+                                    @(
+                                        categoria.Descripcion
+                                        ?? "Sin descripción"
+                                    )
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="status-badge status-inactive">
+                                    <i class="bi bi-box-seam"></i>
+                                    @categoria.Productos.Count
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (categoria.Activa)
+                                {
+                                    <span class="status-badge status-active">
+                                        <i class="bi bi-circle-fill"
+                                           style="font-size: 6px;">
+                                        </i>
+                                        Activa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-inactive">
+                                        <i class="bi bi-circle-fill"
+                                           style="font-size: 6px;">
+                                        </i>
+                                        Inactiva
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+
+                                <a asp-page="./Details"
+                                   asp-route-id="@categoria.Id"
+                                   class="btn btn-sm btn-light action-button"
+                                   title="Ver detalles">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </a>
+
+                                <a asp-page="./Edit"
+                                   asp-route-id="@categoria.Id"
+                                   class="btn btn-sm btn-warning action-button"
+                                   title="Editar">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </a>
+
+                                <a asp-page="./Delete"
+                                   asp-route-id="@categoria.Id"
+                                   class="btn btn-sm btn-danger action-button"
+                                   title="Eliminar">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>

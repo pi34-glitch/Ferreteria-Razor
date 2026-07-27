@@ -1,0 +1,121 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Inventario.EditarModel
+
+@{
+    ViewData["Title"] = "Editar inventario";
+}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-7">
+
+        <div class="d-flex align-items-center mb-4">
+
+            <a asp-page="./Index"
+               class="btn btn-light me-3">
+
+                <i class="bi bi-arrow-left"></i>
+
+            </a>
+
+            <div>
+                <h1 class="h3 mb-1">
+                    Editar inventario
+                </h1>
+
+                <p class="text-muted mb-0">
+                    Actualiza las existencias del producto.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body p-4">
+
+                <div class="alert alert-light border mb-4">
+
+                    <div>
+                        <strong>Producto:</strong>
+                        @Model.NombreProducto
+                    </div>
+
+                    <div>
+                        <strong>Sucursal:</strong>
+                        @Model.NombreSucursal
+                    </div>
+
+                </div>
+
+                <form method="post">
+
+                    <input type="hidden"
+                           asp-for="Input.Id" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger">
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="Input.Stock"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="Input.Stock"
+                               class="form-control"
+                               min="0" />
+
+                        <span asp-validation-for="Input.Stock"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="Input.StockMinimo"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="Input.StockMinimo"
+                               class="form-control"
+                               min="0" />
+
+                        <span asp-validation-for="Input.StockMinimo"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+
+                        <a asp-page="./Index"
+                           class="btn btn-light">
+                            Cancelar
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-warning">
+
+                            <i class="bi bi-save"></i>
+                            Guardar cambios
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

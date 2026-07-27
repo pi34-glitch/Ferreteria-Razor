@@ -1,0 +1,76 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Categorias.DeleteModel
+
+@{
+    ViewData["Title"] = "Eliminar categoría";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">Eliminar categoría</h2>
+                </div>
+
+                <div class="card-body">
+
+                    @if (Model.CantidadProductos > 0)
+                    {
+                        <div class="alert alert-danger">
+                            Esta categoría tiene
+                            <strong>@Model.CantidadProductos</strong>
+                            producto(s) asociado(s) y no puede eliminarse.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            ¿Está seguro de que desea eliminar esta categoría?
+                        </div>
+                    }
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Nombre</dt>
+                        <dd class="col-sm-8">
+                            @Model.Categoria.Nombre
+                        </dd>
+
+                        <dt class="col-sm-4">Descripción</dt>
+                        <dd class="col-sm-8">
+                            @(Model.Categoria.Descripcion ?? "Sin descripción")
+                        </dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">
+                            @(Model.Categoria.Activa ? "Activa" : "Inactiva")
+                        </dd>
+                    </dl>
+
+                    <form method="post">
+                        <input type="hidden"
+                               asp-for="Categoria.Id" />
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-page="./Index"
+                               class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            @if (Model.CantidadProductos == 0)
+                            {
+                                <button type="submit"
+                                        class="btn btn-danger">
+                                    Confirmar eliminación
+                                </button>
+                            }
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

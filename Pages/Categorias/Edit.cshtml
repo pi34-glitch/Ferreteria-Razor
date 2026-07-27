@@ -1,0 +1,86 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Categorias.EditModel
+
+@{
+    ViewData["Title"] = "Editar categoría";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning">
+                    <h2 class="mb-0">Editar categoría</h2>
+                </div>
+
+                <div class="card-body">
+                    <form method="post">
+
+                        <input type="hidden"
+                               asp-for="Categoria.Id" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Categoria.Nombre"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Categoria.Nombre"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Categoria.Nombre"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Categoria.Descripcion"
+                                   class="form-label">
+                            </label>
+
+                            <textarea asp-for="Categoria.Descripcion"
+                                      class="form-control"
+                                      rows="4">
+                            </textarea>
+
+                            <span asp-validation-for="Categoria.Descripcion"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="Categoria.Activa"
+                                   class="form-check-input" />
+
+                            <label asp-for="Categoria.Activa"
+                                   class="form-check-label">
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-page="./Index"
+                               class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-warning">
+                                Guardar cambios
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

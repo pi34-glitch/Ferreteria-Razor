@@ -1,0 +1,98 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Productos.DeleteModel
+
+@{
+    ViewData["Title"] = "Eliminar producto";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">Eliminar producto</h2>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="alert alert-warning">
+                        Esta acción eliminará el producto permanentemente.
+                    </div>
+
+                    <div class="row align-items-center">
+
+                        <div class="col-md-4 text-center mb-3">
+                            @if (!string.IsNullOrWhiteSpace(
+                                Model.Producto.ImagenUrl))
+                            {
+                                <img src="@Model.Producto.ImagenUrl"
+                                     alt="@Model.Producto.Nombre"
+                                     class="img-fluid rounded border"
+                                     style="max-height: 200px;" />
+                            }
+                            else
+                            {
+                                <div class="border rounded bg-light p-5">
+                                    <span class="text-muted">Sin imagen</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-md-8">
+                            <h3>@Model.Producto.Nombre</h3>
+
+                            <dl class="row">
+                                <dt class="col-sm-5">Código</dt>
+                                <dd class="col-sm-7">
+                                    @(Model.Producto.Codigo ?? "Sin código")
+                                </dd>
+
+                                <dt class="col-sm-5">Categoría</dt>
+                                <dd class="col-sm-7">
+                                    @(Model.Producto.Categoria?.Nombre
+                                        ?? "Sin categoría")
+                                </dd>
+
+                                <dt class="col-sm-5">Marca</dt>
+                                <dd class="col-sm-7">
+                                    @(Model.Producto.Marca?.Nombre
+                                        ?? "Sin marca")
+                                </dd>
+
+                                <dt class="col-sm-5">Precio</dt>
+                                <dd class="col-sm-7">
+                                    Bs @Model.Producto.Precio.ToString("N2")
+                                </dd>
+
+                                <dt class="col-sm-5">Stock</dt>
+                                <dd class="col-sm-7">
+                                    @Model.Producto.InventariosSucursales.Sum(i => i.Stock)
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        <input type="hidden"
+                               asp-for="Producto.Id" />
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-page="./Index"
+                               class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                Confirmar eliminación
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

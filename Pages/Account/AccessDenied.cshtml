@@ -1,0 +1,29 @@
+@page
+
+@{
+    ViewData["Title"] = "Acceso denegado";
+}
+
+<div class="content-card">
+
+    <div class="empty-state">
+
+        <i class="bi bi-shield-lock-fill text-danger"></i>
+
+        <h3>Acceso denegado</h3>
+
+        <p>
+            Tu usuario no tiene permisos para acceder a esta sección.
+        </p>
+
+        <a asp-page="/Index"
+           class="btn btn-primary btn-modern">
+
+            <i class="bi bi-house"></i>
+            Volver al inicio
+
+        </a>
+
+    </div>
+
+</div>

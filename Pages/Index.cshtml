@@ -1,0 +1,695 @@
+﻿@page
+@model FerreteriaRazor.Pages.IndexModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var nombresCategorias = JsonSerializer.Serialize(
+        Model.ProductosPorCategoria.Select(c => c.Nombre));
+
+    var cantidadesCategorias = JsonSerializer.Serialize(
+        Model.ProductosPorCategoria.Select(c => c.CantidadProductos));
+}
+
+<div class="container-fluid py-4">
+
+    <!-- Encabezado -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="row align-items-center">
+
+                <div class="col-lg-8">
+
+                    <span class="badge bg-primary mb-3">
+                        Panel administrativo
+                    </span>
+
+                    <h1 class="h3 fw-bold mb-2">
+                        Bienvenido a La Llave Nuda
+                    </h1>
+
+                    <p class="text-muted mb-0">
+                        Consulta el estado del catálogo y del inventario
+                        de todas las sucursales.
+                    </p>
+
+                </div>
+
+                <div class="col-lg-4 mt-4 mt-lg-0">
+
+                    <div class="d-flex flex-wrap justify-content-lg-end gap-2">
+
+                        <a asp-page="/Inventario/NuevoProducto"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Registrar producto
+
+                        </a>
+
+                        <a asp-page="/Inventario/Agregar"
+                           class="btn btn-outline-primary">
+
+                            <i class="bi bi-box-arrow-in-down me-1"></i>
+                            Producto existente
+
+                        </a>
+
+                        <a asp-page="/Inventario/Index"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-boxes me-1"></i>
+                            Ver inventario
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Tarjetas -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <span class="text-muted">
+                                Productos registrados
+                            </span>
+
+                            <h2 class="display-6 fw-bold mt-2 mb-0">
+                                @Model.TotalProductos
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-primary">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+
+                    </div>
+
+                    <a asp-page="/Productos/Index"
+                       class="text-decoration-none d-inline-block mt-3">
+
+                        Ver catálogo
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <span class="text-muted">
+                                Stock total
+                            </span>
+
+                            <h2 class="display-6 fw-bold mt-2 mb-0">
+                                @Model.StockTotal
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-success">
+                            <i class="bi bi-boxes"></i>
+                        </div>
+
+                    </div>
+
+                    <span class="small text-muted d-inline-block mt-3">
+                        Unidades entre todas las sucursales
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <span class="text-muted">
+                                Alertas de stock
+                            </span>
+
+                            <h2 class="display-6 fw-bold mt-2 mb-0">
+                                @(Model.InventariosBajoStock +
+                                  Model.InventariosSinStock)
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+
+                    </div>
+
+                    <span class="small text-muted d-inline-block mt-3">
+                        @Model.InventariosBajoStock con stock bajo ·
+                        @Model.InventariosSinStock sin stock
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+                            <span class="text-muted">
+                                Valor del inventario
+                            </span>
+
+                            <h2 class="h3 fw-bold mt-2 mb-0">
+                                Bs @Model.ValorInventario.ToString("N2")
+                            </h2>
+                        </div>
+
+                        <div class="fs-2 text-info">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+
+                    </div>
+
+                    <span class="small text-muted d-inline-block mt-3">
+                        @Model.TotalSucursalesActivas sucursales activas
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4 mb-4">
+
+        <!-- Alertas -->
+        <div class="col-xl-7">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <h2 class="h5 fw-bold mb-1">
+                                Alertas de inventario
+                            </h2>
+
+                            <p class="text-muted small mb-0">
+                                Productos que requieren reposición por sucursal
+                            </p>
+                        </div>
+
+                        <span class="badge bg-warning text-dark">
+                            @(Model.InventariosBajoStock +
+                              Model.InventariosSinStock)
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body px-4">
+
+                    @if (!Model.AlertasStock.Any())
+                    {
+                        <div class="text-center py-5">
+
+                            <i class="bi bi-check-circle-fill
+                                      text-success display-5">
+                            </i>
+
+                            <h3 class="h6 fw-bold mt-3">
+                                Inventario saludable
+                            </h3>
+
+                            <p class="text-muted mb-0">
+                                No existen registros con stock bajo.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+
+                            <table class="table align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Sucursal</th>
+                                        <th>Stock</th>
+                                        <th>Mínimo</th>
+                                        <th>Estado</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var alerta in Model.AlertasStock)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                <strong class="d-block">
+                                                    @alerta.Producto
+                                                </strong>
+
+                                                <small class="text-muted">
+                                                    @alerta.Codigo ·
+                                                    @alerta.Categoria
+                                                </small>
+                                            </td>
+
+                                            <td>
+                                                @alerta.Sucursal
+                                            </td>
+
+                                            <td class="fw-bold">
+                                                @alerta.Stock
+                                            </td>
+
+                                            <td>
+                                                @alerta.StockMinimo
+                                            </td>
+
+                                            <td>
+
+                                                @if (alerta.SinStock)
+                                                {
+                                                    <span class="badge bg-danger">
+                                                        Sin stock
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge
+                                                                 bg-warning
+                                                                 text-dark">
+                                                        Stock bajo
+                                                    </span>
+                                                }
+
+                                            </td>
+
+                                            <td class="text-end">
+
+                                                <a asp-page="/Inventario/Editar"
+                                                   asp-route-id="@alerta.InventarioId"
+                                                   class="btn btn-sm
+                                                          btn-outline-primary"
+                                                   title="Editar inventario">
+
+                                                    <i class="bi bi-pencil"></i>
+
+                                                </a>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div class="text-end">
+
+                            <a asp-page="/Inventario/Index"
+                               class="text-decoration-none">
+
+                                Ver inventario completo
+                                <i class="bi bi-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Gráfico -->
+        <div class="col-xl-5">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+
+                    <h2 class="h5 fw-bold mb-1">
+                        Productos por categoría
+                    </h2>
+
+                    <p class="text-muted small mb-0">
+                        Distribución actual del catálogo
+                    </p>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (Model.ProductosPorCategoria.Any())
+                    {
+                        <div style="height: 320px;">
+                            <canvas id="categoriasChart"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+
+                            <i class="bi bi-pie-chart
+                                      text-muted display-5">
+                            </i>
+
+                            <p class="text-muted mt-3 mb-0">
+                                No existen datos para mostrar.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Productos recientes -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <div class="d-flex flex-wrap
+                        justify-content-between
+                        align-items-center gap-3">
+
+                <div>
+                    <h2 class="h5 fw-bold mb-1">
+                        Productos recientes
+                    </h2>
+
+                    <p class="text-muted small mb-0">
+                        Últimos productos registrados en el catálogo
+                    </p>
+                </div>
+
+                <a asp-page="/Inventario/NuevoProducto"
+                   class="btn btn-primary">
+
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Nuevo producto
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="card-body px-4">
+
+            @if (!Model.ProductosRecientes.Any())
+            {
+                <div class="text-center py-5">
+
+                    <i class="bi bi-box-seam
+                              text-muted display-5">
+                    </i>
+
+                    <h3 class="h6 fw-bold mt-3">
+                        No hay productos registrados
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        Los productos recientes aparecerán aquí.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Marca</th>
+                                <th>Precio</th>
+                                <th>Stock total</th>
+                                <th>Registro</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var producto in Model.ProductosRecientes)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <div class="d-flex
+                                                    align-items-center
+                                                    gap-3">
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                producto.ImagenUrl))
+                                            {
+                                                <img src="@producto.ImagenUrl"
+                                                     alt="@producto.Nombre"
+                                                     width="48"
+                                                     height="48"
+                                                     class="rounded border"
+                                                     style="object-fit: cover;" />
+                                            }
+                                            else
+                                            {
+                                                <div class="rounded border
+                                                            bg-light
+                                                            d-flex
+                                                            align-items-center
+                                                            justify-content-center"
+                                                     style="width: 48px;
+                                                            height: 48px;">
+
+                                                    <i class="bi bi-image
+                                                              text-muted">
+                                                    </i>
+
+                                                </div>
+                                            }
+
+                                            <div>
+
+                                                <strong class="d-block">
+                                                    @producto.Nombre
+                                                </strong>
+
+                                                <small class="text-muted">
+                                                    @producto.Codigo
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        @producto.Categoria
+                                    </td>
+
+                                    <td>
+                                        @producto.Marca
+                                    </td>
+
+                                    <td class="fw-semibold">
+                                        Bs @producto.Precio.ToString("N2")
+                                    </td>
+
+                                    <td>
+
+                                        @if (producto.StockTotal == 0)
+                                        {
+                                            <span class="badge bg-danger">
+                                                Sin stock
+                                            </span>
+                                        }
+                                        else if (producto.TieneStockBajo)
+                                        {
+                                            <span class="badge
+                                                         bg-warning
+                                                         text-dark">
+                                                @producto.StockTotal unidades
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">
+                                                @producto.StockTotal unidades
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>
+                                        @producto.FechaRegistro
+                                            .ToLocalTime()
+                                            .ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        <a asp-page="/Productos/Details"
+                                           asp-route-id="@producto.ProductoId"
+                                           class="btn btn-sm
+                                                  btn-outline-secondary"
+                                           title="Ver producto">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const canvas =
+                document.getElementById("categoriasChart");
+
+            if (!canvas) {
+                return;
+            }
+
+            const nombresCategorias =
+                @Html.Raw(nombresCategorias);
+
+            const cantidadesCategorias =
+                @Html.Raw(cantidadesCategorias);
+
+            new Chart(canvas, {
+                type: "doughnut",
+
+                data: {
+                    labels: nombresCategorias,
+
+                    datasets: [
+                        {
+                            data: cantidadesCategorias,
+
+                            backgroundColor: [
+                                "#0d6efd",
+                                "#198754",
+                                "#ffc107",
+                                "#dc3545",
+                                "#0dcaf0",
+                                "#6f42c1",
+                                "#fd7e14",
+                                "#6c757d"
+                            ],
+
+                            borderWidth: 0,
+                            hoverOffset: 8
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "65%",
+
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+
+                            labels: {
+                                usePointStyle: true,
+                                padding: 18
+                            }
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>
+}

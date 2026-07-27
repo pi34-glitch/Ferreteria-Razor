@@ -1,0 +1,220 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Productos.EditModel
+
+@{
+    ViewData["Title"] = "Editar producto";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning">
+                    <h2 class="mb-0">Editar producto</h2>
+                </div>
+
+                <div class="card-body">
+
+                    <form method="post"
+                          enctype="multipart/form-data">
+
+                        <input type="hidden"
+                               asp-for="Producto.Id" />
+
+                        <input type="hidden"
+                               asp-for="Producto.ImagenUrl" />
+
+                        <input type="hidden"
+                               asp-for="Producto.FechaRegistro" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="Producto.Nombre"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Producto.Nombre"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Producto.Nombre"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Producto.Codigo"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Producto.Codigo"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Producto.Codigo"
+                                      class="text-danger">
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Producto.Descripcion"
+                                   class="form-label">
+                            </label>
+
+                            <textarea asp-for="Producto.Descripcion"
+                                      class="form-control"
+                                      rows="3">
+                            </textarea>
+
+                            <span asp-validation-for="Producto.Descripcion"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Producto.Precio"
+                                       class="form-label">
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">Bs</span>
+
+                                    <input asp-for="Producto.Precio"
+                                           class="form-control"
+                                           type="number"
+                                           step="0.01"
+                                           min="0.01" />
+                                </div>
+
+                                <span asp-validation-for="Producto.Precio"
+                                      class="text-danger">
+                                </span>
+                            </div>
+                            
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Producto.CategoriaId"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="Producto.CategoriaId"
+                                        asp-items="Model.Categorias"
+                                        class="form-select">
+                                </select>
+
+                                <span asp-validation-for="Producto.CategoriaId"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Producto.MarcaId"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="Producto.MarcaId"
+                                        asp-items="Model.Marcas"
+                                        class="form-select">
+                                </select>
+
+                                <span asp-validation-for="Producto.MarcaId"
+                                      class="text-danger">
+                                </span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Producto.DistribuidoraId"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="Producto.DistribuidoraId"
+                                        asp-items="Model.Distribuidoras"
+                                        class="form-select">
+                                </select>
+
+                                <span asp-validation-for="Producto.DistribuidoraId"
+                                      class="text-danger">
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Imagen actual</label>
+
+                            <div>
+                                @if (!string.IsNullOrWhiteSpace(
+                                    Model.Producto.ImagenUrl))
+                                {
+                                    <img src="@Model.Producto.ImagenUrl"
+                                         alt="@Model.Producto.Nombre"
+                                         class="img-thumbnail mb-2"
+                                         style="width: 150px;
+                                                height: 150px;
+                                                object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <p class="text-muted">Sin imagen</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NuevaImagen"
+                                   class="form-label">
+                                Reemplazar imagen
+                            </label>
+
+                            <input asp-for="NuevaImagen"
+                                   class="form-control"
+                                   type="file"
+                                   accept=".jpg,.jpeg,.png,.webp" />
+
+                            <span asp-validation-for="NuevaImagen"
+                                  class="text-danger">
+                            </span>
+
+                            <div class="form-text">
+                                Déjalo vacío para conservar la imagen actual.
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="Producto.Activo"
+                                   class="form-check-input" />
+
+                            <label asp-for="Producto.Activo"
+                                   class="form-check-label">
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-page="./Index"
+                               class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-warning">
+                                Guardar cambios
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

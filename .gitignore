@@ -1,0 +1,29 @@
+# Compilación de .NET
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Visual Studio Code
+.vscode/
+
+# Configuraciones locales
+appsettings.Development.json
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+
+# Base de datos y archivos temporales
+*.db
+*.sqlite
+*.sqlite3
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
