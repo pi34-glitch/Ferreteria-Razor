@@ -1,0 +1,144 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Distribuidoras.DetailsModel
+
+@{
+    ViewData["Title"] = "Detalles de distribuidora";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <div class="page-content-header">
+            <div>
+                <h1 class="page-content-title">
+                    Detalles de distribuidora
+                </h1>
+
+                <p class="page-content-description">
+                    Información de contacto y productos asociados.
+                </p>
+            </div>
+
+            <a asp-page="./Index" class="btn btn-light">
+                <i class="bi bi-arrow-left"></i>
+                Volver
+            </a>
+        </div>
+
+        <div class="content-panel">
+            <div class="p-4">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="icon-box">
+                        <i class="bi bi-truck"></i>
+                    </div>
+
+                    <div>
+                        <h2 class="h4 mb-1">
+                            @Model.Distribuidora.Nombre
+                        </h2>
+
+                        @if (Model.Distribuidora.Activa)
+                        {
+                            <span class="badge bg-success-subtle text-success">
+                                Activa
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary-subtle text-secondary">
+                                Inactiva
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <dl class="row">
+                    <dt class="col-sm-4">Contacto</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Distribuidora.Contacto ?? "Sin contacto")
+                    </dd>
+
+                    <dt class="col-sm-4">Teléfono</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Distribuidora.Telefono ?? "Sin teléfono")
+                    </dd>
+
+                    <dt class="col-sm-4">Correo</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Distribuidora.Correo ?? "Sin correo")
+                    </dd>
+
+                    <dt class="col-sm-4">Dirección</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Distribuidora.Direccion ?? "Sin dirección")
+                    </dd>
+
+                    <dt class="col-sm-4">Productos asociados</dt>
+                    <dd class="col-sm-8">
+                        @Model.Distribuidora.Productos.Count
+                    </dd>
+                </dl>
+
+                <hr />
+
+                <h3 class="h5 mb-3">
+                    Productos suministrados
+                </h3>
+
+                @if (!Model.Distribuidora.Productos.Any())
+                {
+                    <div class="alert alert-light border">
+                        No existen productos asociados.
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group mb-4">
+                        @foreach (var producto in
+                            Model.Distribuidora.Productos
+                                .OrderBy(p => p.Nombre))
+                        {
+                            <div class="list-group-item
+                                        d-flex
+                                        justify-content-between
+                                        align-items-center">
+
+                                <div>
+                                    <strong>@producto.Nombre</strong>
+
+                                    <div class="small text-muted">
+                                        @producto.Codigo
+                                    </div>
+                                </div>
+
+                                <span class="badge bg-light text-dark">
+                                    Bs @producto.Precio.ToString("N2")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-page="./Edit"
+                       asp-route-id="@Model.Distribuidora.Id"
+                       class="btn btn-warning">
+
+                        <i class="bi bi-pencil me-1"></i>
+                        Editar
+                    </a>
+
+                    <a asp-page="./Delete"
+                       asp-route-id="@Model.Distribuidora.Id"
+                       class="btn btn-danger">
+
+                        <i class="bi bi-trash me-1"></i>
+                        Eliminar
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

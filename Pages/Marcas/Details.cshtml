@@ -1,0 +1,131 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Marcas.DetailsModel
+
+@{
+    ViewData["Title"] = "Detalles de marca";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <div class="page-content-header">
+            <div>
+                <h1 class="page-content-title">
+                    Detalles de marca
+                </h1>
+
+                <p class="page-content-description">
+                    Información y productos asociados.
+                </p>
+            </div>
+
+            <a asp-page="./Index" class="btn btn-light">
+                <i class="bi bi-arrow-left"></i>
+                Volver
+            </a>
+        </div>
+
+        <div class="content-panel">
+            <div class="p-4">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="icon-box">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+
+                    <div>
+                        <h2 class="h4 mb-1">
+                            @Model.Marca.Nombre
+                        </h2>
+
+                        @if (Model.Marca.Activa)
+                        {
+                            <span class="badge bg-success-subtle text-success">
+                                Activa
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary-subtle text-secondary">
+                                Inactiva
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <dl class="row mb-4">
+                    <dt class="col-sm-4">Descripción</dt>
+
+                    <dd class="col-sm-8">
+                        @(string.IsNullOrWhiteSpace(Model.Marca.Descripcion)
+                            ? "Sin descripción"
+                            : Model.Marca.Descripcion)
+                    </dd>
+
+                    <dt class="col-sm-4">Productos asociados</dt>
+
+                    <dd class="col-sm-8">
+                        @Model.Marca.Productos.Count
+                    </dd>
+                </dl>
+
+                <h3 class="h5 mb-3">
+                    Productos de esta marca
+                </h3>
+
+                @if (!Model.Marca.Productos.Any())
+                {
+                    <div class="alert alert-light border mb-0">
+                        No existen productos asociados.
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group mb-4">
+                        @foreach (var producto in
+                            Model.Marca.Productos.OrderBy(p => p.Nombre))
+                        {
+                            <div class="list-group-item
+                                        d-flex
+                                        justify-content-between
+                                        align-items-center">
+
+                                <div>
+                                    <strong>@producto.Nombre</strong>
+
+                                    <div class="small text-muted">
+                                        @producto.Codigo
+                                    </div>
+                                </div>
+
+                                <span class="badge bg-light text-dark">
+                                    Bs @producto.Precio.ToString("N2")
+                                </span>
+
+                            </div>
+                        }
+                    </div>
+                }
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-page="./Edit"
+                       asp-route-id="@Model.Marca.Id"
+                       class="btn btn-warning">
+
+                        <i class="bi bi-pencil me-1"></i>
+                        Editar
+                    </a>
+
+                    <a asp-page="./Delete"
+                       asp-route-id="@Model.Marca.Id"
+                       class="btn btn-danger">
+
+                        <i class="bi bi-trash me-1"></i>
+                        Eliminar
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

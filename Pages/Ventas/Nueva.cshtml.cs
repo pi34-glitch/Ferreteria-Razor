@@ -129,13 +129,13 @@ public class NuevaModel : PageModel
 
         decimal precioUnitario = inventario.Producto.Precio;
         decimal subtotal = precioUnitario * cantidad;
-
+        Venta? ventaRegistrada = null;
         await using var transaccion =
             await _context.Database.BeginTransactionAsync();
 
         try
         {
-            var venta = new Venta
+            ventaRegistrada = new Venta
             {
                 Fecha = DateTime.UtcNow,
                 SucursalId = sucursalId,
@@ -144,7 +144,7 @@ public class NuevaModel : PageModel
                 Total = subtotal
             };
 
-            venta.Detalles.Add(new DetalleVenta
+            ventaRegistrada.Detalles.Add(new DetalleVenta
             {
                 ProductoId = inventario.ProductoId,
                 Cantidad = cantidad,
@@ -155,7 +155,7 @@ public class NuevaModel : PageModel
             inventario.Stock -= cantidad;
             inventario.FechaActualizacion = DateTime.UtcNow;
 
-            _context.Ventas.Add(venta);
+            _context.Ventas.Add(ventaRegistrada);
 
             await _context.SaveChangesAsync();
             await transaccion.CommitAsync();
@@ -174,7 +174,10 @@ public class NuevaModel : PageModel
         TempData["MensajeExito"] =
             "La venta fue registrada correctamente.";
 
-        return RedirectToPage("./Index");
+        return RedirectToPage("./Detalle", new
+        {
+            id = ventaRegistrada!.Id
+        });
     }
 
     private async Task PrepararPaginaAsync(int sucursalId)

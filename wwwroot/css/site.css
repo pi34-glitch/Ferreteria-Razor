@@ -1487,3 +1487,43 @@ textarea.form-control {
         font-size: 27px;
     }
 }
+
+@media print {
+    body {
+        background: #ffffff !important;
+    }
+
+    .sidebar,
+    header,
+    nav,
+    footer,
+    .no-print {
+        display: none !important;
+    }
+
+    main,
+    .main-content,
+    .content-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .comprobante {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .comprobante .card-body {
+        padding: 0 !important;
+    }
+
+    .table {
+        width: 100% !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+}

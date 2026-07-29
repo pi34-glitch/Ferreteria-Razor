@@ -1,0 +1,147 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Distribuidoras.EditModel
+
+@{
+    ViewData["Title"] = "Editar distribuidora";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <div class="page-content-header">
+            <div>
+                <h1 class="page-content-title">
+                    Editar distribuidora
+                </h1>
+
+                <p class="page-content-description">
+                    Actualiza los datos de contacto y disponibilidad.
+                </p>
+            </div>
+
+            <a asp-page="./Index" class="btn btn-light">
+                <i class="bi bi-arrow-left"></i>
+                Volver
+            </a>
+        </div>
+
+        <div class="content-panel">
+            <div class="p-4">
+
+                <form method="post">
+
+                    <input type="hidden" asp-for="Input.Id" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger"
+                         role="alert">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label asp-for="Input.Nombre"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Input.Nombre"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Input.Nombre"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-5 mb-3">
+                            <label asp-for="Input.Contacto"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Input.Contacto"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Input.Contacto"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Telefono"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Input.Telefono"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Input.Telefono"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Correo"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Input.Correo"
+                                   type="email"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Input.Correo"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label asp-for="Input.Direccion"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Input.Direccion"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Input.Direccion"
+                                  class="text-danger">
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="Input.Activa"
+                               class="form-check-input" />
+
+                        <label asp-for="Input.Activa"
+                               class="form-check-label">
+                        </label>
+                    </div>
+
+                    <div class="alert alert-light border">
+                        <i class="bi bi-info-circle me-2"></i>
+
+                        Una distribuidora inactiva no aparecerá en el
+                        registro de nuevos productos.
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a asp-page="./Index"
+                           class="btn btn-light">
+                            Cancelar
+                        </a>
+
+                        <button type="submit"
+                                class="btn-primary-ferreteria">
+
+                            <i class="bi bi-check-lg"></i>
+                            Guardar cambios
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

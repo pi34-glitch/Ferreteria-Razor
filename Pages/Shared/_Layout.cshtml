@@ -196,6 +196,17 @@
                             </span>
                     </a>
                 }
+                @if (User.IsInRole("Gerente") ||
+                    User.IsInRole("Empleado"))
+                {
+                    <a asp-page="/Ventas/MisVentas"
+                    class="nav-link">
+
+                        <i class="bi bi-receipt-cutoff me-2"></i>
+                        Mis ventas
+
+                    </a>
+                }
 
                 <!-- ADMINISTRACIÓN -->
                 @if (User.IsInRole("Administrador"))

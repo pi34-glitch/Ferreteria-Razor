@@ -1,21 +1,20 @@
 @page
-@model FerreteriaRazor.Pages.Ventas.IndexModel
+@model FerreteriaRazor.Pages.Ventas.MisVentasModel
 @using FerreteriaRazor.Models
 
 @{
-    ViewData["Title"] = "Historial de ventas";
-    ViewData["MenuActivo"] = "HistorialVentas";
+    ViewData["Title"] = "Mis ventas";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <div>
         <h1 class="h3 mb-1">
-            Historial de ventas
+            Mis ventas
         </h1>
 
         <p class="text-muted mb-0">
-            Consulta las ventas registradas, usuarios y métodos de pago.
+            Consulta únicamente las ventas registradas por tu usuario.
         </p>
     </div>
 
@@ -29,24 +28,6 @@
 
 </div>
 
-@if (TempData["MensajeExito"] is not null)
-{
-    <div class="alert alert-success alert-dismissible fade show"
-         role="alert">
-
-        <i class="bi bi-check-circle me-2"></i>
-
-        @TempData["MensajeExito"]
-
-        <button type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Cerrar">
-        </button>
-
-    </div>
-}
-
 <div class="card border-0 shadow-sm mb-4">
 
     <div class="card-body">
@@ -54,29 +35,7 @@
         <form method="get"
               class="row g-3 align-items-end">
 
-            @if (Model.EsAdministrador)
-            {
-                <div class="col-md-4">
-
-                    <label asp-for="SucursalId"
-                           class="form-label">
-                        Sucursal
-                    </label>
-
-                    <select asp-for="SucursalId"
-                            asp-items="Model.ListaSucursales"
-                            class="form-select">
-
-                        <option value="">
-                            Todas las sucursales
-                        </option>
-
-                    </select>
-
-                </div>
-            }
-
-            <div class="col-md-3">
+            <div class="col-md-4">
 
                 <label asp-for="FechaDesde"
                        class="form-label">
@@ -89,7 +48,7 @@
 
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4">
 
                 <label asp-for="FechaHasta"
                        class="form-label">
@@ -112,7 +71,7 @@
 
                 </button>
 
-                <a asp-page="./Index"
+                <a asp-page="./MisVentas"
                    class="btn btn-light">
 
                     Limpiar
@@ -138,11 +97,11 @@
                 <i class="bi bi-receipt fs-1 text-muted"></i>
 
                 <h4 class="mt-3">
-                    No hay ventas registradas
+                    No tienes ventas registradas
                 </h4>
 
                 <p class="text-muted mb-0">
-                    Registra una venta o modifica los filtros seleccionados.
+                    Registra una nueva venta o modifica los filtros.
                 </p>
 
             </div>
@@ -158,13 +117,10 @@
                             <th>N.º</th>
                             <th>Fecha</th>
                             <th>Sucursal</th>
-                            <th>Usuario</th>
                             <th>Productos</th>
                             <th>Método de pago</th>
                             <th class="text-end">Total</th>
-                            <th class="text-end">
-                                Acciones
-                            </th>
+                            <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
 
@@ -174,10 +130,8 @@
                         {
                             <tr>
 
-                                <td>
-                                    <span class="fw-semibold">
-                                        #@venta.Id
-                                    </span>
+                                <td class="fw-semibold">
+                                    #@venta.Id
                                 </td>
 
                                 <td>
@@ -200,46 +154,14 @@
                                 </td>
 
                                 <td>
-                                    <div class="d-flex align-items-center">
-
-                                        <i class="bi bi-person-circle fs-5 me-2 text-muted"></i>
-
-                                        <div>
-                                            <div class="fw-semibold">
-                                                @(venta.Usuario.UserName
-                                                    ?? venta.Usuario.Email
-                                                    ?? "Usuario")
-                                            </div>
-
-                                            @if (!string.IsNullOrWhiteSpace(
-                                                venta.Usuario.Email)
-                                                && venta.Usuario.Email
-                                                    != venta.Usuario.UserName)
-                                            {
-                                                <small class="text-muted">
-                                                    @venta.Usuario.Email
-                                                </small>
-                                            }
-                                        </div>
-
-                                    </div>
-                                </td>
-
-                                <td>
                                     @foreach (var detalle in venta.Detalles)
                                     {
                                         <div class="mb-1">
-
                                             <span class="fw-semibold">
                                                 @detalle.Cantidad ×
                                             </span>
 
                                             @detalle.Producto.Nombre
-
-                                            <small class="text-muted">
-                                                (@detalle.PrecioUnitario.ToString("N2"))
-                                            </small>
-
                                         </div>
                                     }
                                 </td>
@@ -248,70 +170,48 @@
                                     @switch (venta.MetodoPago)
                                     {
                                         case MetodoPago.Efectivo:
-
                                             <span class="badge bg-success">
-
                                                 <i class="bi bi-cash-stack me-1"></i>
                                                 Efectivo
-
                                             </span>
-
                                             break;
 
                                         case MetodoPago.QR:
-
                                             <span class="badge bg-primary">
-
                                                 <i class="bi bi-qr-code me-1"></i>
                                                 QR
-
                                             </span>
-
                                             break;
 
                                         case MetodoPago.Tarjeta:
-
                                             <span class="badge bg-dark">
-
                                                 <i class="bi bi-credit-card me-1"></i>
                                                 Tarjeta
-
                                             </span>
-
                                             break;
 
                                         default:
-
                                             <span class="badge bg-secondary">
-
-                                                <i class="bi bi-question-circle me-1"></i>
                                                 No especificado
-
                                             </span>
-
                                             break;
                                     }
                                 </td>
 
-                                <td class="text-end">
-
-                                    <span class="fw-bold">
-                                        Bs @venta.Total.ToString("N2")
-                                    </span>
-
+                                <td class="text-end fw-bold">
+                                    Bs @venta.Total.ToString("N2")
                                 </td>
-                                <td class="text-end">
 
+                                <td class="text-end">
                                     <a asp-page="./Detalle"
-                                    asp-route-id="@venta.Id"
-                                    class="btn btn-outline-primary btn-sm"
-                                    title="Ver comprobante"
-                                    aria-label="Ver comprobante">
+                                       asp-route-id="@venta.Id"
+                                       class="btn btn-outline-primary btn-sm"
+                                       title="Ver comprobante"
+                                       aria-label="Ver comprobante">
 
                                         <i class="bi bi-eye"></i>
 
                                     </a>
-
                                 </td>
 
                             </tr>

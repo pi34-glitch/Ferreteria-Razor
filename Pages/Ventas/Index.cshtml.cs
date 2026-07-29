@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FerreteriaRazor.Pages.Ventas;
 
-[Authorize(Roles = "Administrador,Gerente,Empleado")]
+[Authorize(Roles = "Administrador,Gerente")]
 public class IndexModel : PageModel
 {
     private readonly ApplicationDbContext _context;

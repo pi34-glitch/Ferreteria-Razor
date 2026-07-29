@@ -62,9 +62,11 @@ public class NuevoProductoModel : PageModel
         [Display(Name = "Código")]
         public string Codigo { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Debe seleccionar una marca.")]
         [Display(Name = "Marca")]
         public int? MarcaId { get; set; }
 
+        [Required(ErrorMessage = "Debe seleccionar una distribuidora.")]
         [Display(Name = "Distribuidora")]
         public int? DistribuidoraId { get; set; }
 
@@ -173,17 +175,15 @@ public class NuevoProductoModel : PageModel
                 "Debe seleccionar una distribuidora.");
         }
 
-        if (!ModelState.IsValid ||
-            !Input.CategoriaId.HasValue ||
-            !Input.MarcaId.HasValue ||
-            !Input.DistribuidoraId.HasValue)
+        if (!ModelState.IsValid)
+
         {
             return Page();
         }
 
-        int categoriaId = Input.CategoriaId.Value;
-        int marcaId = Input.MarcaId.Value;
-        int distribuidoraId = Input.DistribuidoraId.Value;
+        int categoriaId = Input.CategoriaId!.Value;
+        int marcaId = Input.MarcaId!.Value;
+        int distribuidoraId = Input.DistribuidoraId!.Value;
 
         var sucursalValida = await _context.Sucursales
             .AnyAsync(s =>
@@ -200,7 +200,10 @@ public class NuevoProductoModel : PageModel
         }
 
         var categoriaValida = await _context.Categorias
-            .AnyAsync(c => c.Id == categoriaId);
+            .AsNoTracking()
+            .AnyAsync(c =>
+                c.Id == categoriaId &&
+                c.Activa);
 
         if (!categoriaValida)
         {
@@ -212,25 +215,31 @@ public class NuevoProductoModel : PageModel
         }
 
         var marcaValida = await _context.Marcas
-            .AnyAsync(m => m.Id == marcaId);
+            .AsNoTracking()
+            .AnyAsync(m =>
+                m.Id == marcaId &&
+                m.Activa);
 
         if (!marcaValida)
         {
             ModelState.AddModelError(
                 nameof(Input.MarcaId),
-                "La marca seleccionada no existe.");
+                "La marca seleccionada no existe o se encuentra inactiva.");
 
             return Page();
         }
 
         var distribuidoraValida = await _context.Distribuidoras
-            .AnyAsync(d => d.Id == distribuidoraId);
+            .AsNoTracking()
+            .AnyAsync(d =>
+                d.Id == distribuidoraId &&
+                d.Activa);
 
         if (!distribuidoraValida)
         {
             ModelState.AddModelError(
                 nameof(Input.DistribuidoraId),
-                "La distribuidora seleccionada no existe.");
+                "La distribuidora seleccionada no existe o se encuentra inactiva.");
 
             return Page();
         }
@@ -272,14 +281,14 @@ public class NuevoProductoModel : PageModel
             var producto = new Producto
             {
                 Codigo = Input.Codigo.Trim(),
-                Nombre = nombreLimpio,
+                Nombre = Input.Nombre.Trim(),
                 Descripcion = Input.Descripcion?.Trim(),
                 Precio = Input.Precio,
-                CategoriaId = categoriaId,
-                MarcaId = marcaId,
-                DistribuidoraId = distribuidoraId,
-                FechaRegistro = DateTime.UtcNow,
-                Activo = true
+                CategoriaId = Input.CategoriaId!.Value,
+                MarcaId = Input.MarcaId!.Value,
+                DistribuidoraId = Input.DistribuidoraId!.Value,
+                Activo = true,
+                FechaRegistro = DateTime.UtcNow
             };
 
             _context.Productos.Add(producto);
@@ -309,13 +318,13 @@ public class NuevoProductoModel : PageModel
 
             return RedirectToPage("./Index");
         }
-        catch
+        catch (DbUpdateException)
         {
             await transaccion.RollbackAsync();
 
             ModelState.AddModelError(
                 string.Empty,
-                "No se pudo registrar el producto. No se realizó ningún cambio.");
+                "No se pudo registrar el producto. Verifique los datos e intente nuevamente.");
 
             return Page();
         }
@@ -360,16 +369,19 @@ public class NuevoProductoModel : PageModel
     {
         var categorias = await _context.Categorias
             .AsNoTracking()
+            .Where(c => c.Activa)
             .OrderBy(c => c.Nombre)
             .ToListAsync();
 
         var marcas = await _context.Marcas
             .AsNoTracking()
+            .Where(m => m.Activa)
             .OrderBy(m => m.Nombre)
             .ToListAsync();
 
         var distribuidoras = await _context.Distribuidoras
             .AsNoTracking()
+            .Where(d => d.Activa)
             .OrderBy(d => d.Nombre)
             .ToListAsync();
 

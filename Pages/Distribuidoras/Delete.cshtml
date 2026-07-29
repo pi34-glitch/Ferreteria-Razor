@@ -1,0 +1,84 @@
+@page "{id:int}"
+@model FerreteriaRazor.Pages.Distribuidoras.DeleteModel
+
+@{
+    ViewData["Title"] = "Eliminar distribuidora";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <div class="page-content-header">
+            <div>
+                <h1 class="page-content-title">
+                    Eliminar distribuidora
+                </h1>
+
+                <p class="page-content-description">
+                    Confirma la eliminación del registro.
+                </p>
+            </div>
+
+            <a asp-page="./Index" class="btn btn-light">
+                <i class="bi bi-arrow-left"></i>
+                Volver
+            </a>
+        </div>
+
+        <div class="content-panel">
+            <div class="p-4">
+
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Esta acción no se puede deshacer.
+                </div>
+
+                <dl class="row">
+                    <dt class="col-sm-4">Distribuidora</dt>
+                    <dd class="col-sm-8">
+                        @Model.Distribuidora.Nombre
+                    </dd>
+
+                    <dt class="col-sm-4">Contacto</dt>
+                    <dd class="col-sm-8">
+                        @(Model.Distribuidora.Contacto ?? "Sin contacto")
+                    </dd>
+
+                    <dt class="col-sm-4">Productos asociados</dt>
+                    <dd class="col-sm-8">
+                        @Model.CantidadProductos
+                    </dd>
+                </dl>
+
+                @if (Model.CantidadProductos > 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        No puede eliminarse porque tiene productos asociados.
+                        Puede desactivarla desde la página de edición.
+                    </div>
+                }
+
+                <form method="post">
+                    <input type="hidden"
+                           asp-for="Distribuidora.Id" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-page="./Index"
+                           class="btn btn-light">
+                            Cancelar
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-danger"
+                                disabled="@(Model.CantidadProductos > 0)">
+
+                            <i class="bi bi-trash me-1"></i>
+                            Eliminar distribuidora
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
