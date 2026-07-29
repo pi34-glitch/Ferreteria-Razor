@@ -49,7 +49,8 @@ public class IndexModel : PageModel
             _context.InventariosSucursales
                 .AsNoTracking()
                 .Include(i => i.Producto)
-                .Include(i => i.Sucursal);
+                .Include(i => i.Sucursal)
+                .Where(i => i.Producto.Activo);
 
         if (EsAdministrador)
         {
@@ -57,8 +58,21 @@ public class IndexModel : PageModel
 
             if (SucursalId.HasValue)
             {
-                consulta = consulta.Where(
-                    i => i.SucursalId == SucursalId.Value);
+                bool sucursalValida = await _context.Sucursales
+                    .AsNoTracking()
+                    .AnyAsync(s =>
+                        s.Id == SucursalId.Value &&
+                        s.Activa);
+
+                if (!sucursalValida)
+                {
+                    SucursalId = null;
+                }
+                else
+                {
+                    consulta = consulta.Where(
+                        i => i.SucursalId == SucursalId.Value);
+                }
             }
         }
         else
@@ -68,10 +82,23 @@ public class IndexModel : PageModel
                 return Forbid();
             }
 
-            SucursalId = usuarioActual.SucursalId.Value;
+            int sucursalGerenteId = usuarioActual.SucursalId.Value;
+
+            bool sucursalActiva = await _context.Sucursales
+                .AsNoTracking()
+                .AnyAsync(s =>
+                    s.Id == sucursalGerenteId &&
+                    s.Activa);
+
+            if (!sucursalActiva)
+            {
+                return Forbid();
+            }
+
+            SucursalId = sucursalGerenteId;
 
             consulta = consulta.Where(
-                i => i.SucursalId == usuarioActual.SucursalId.Value);
+                i => i.SucursalId == sucursalGerenteId);
         }
 
         Inventarios = await consulta
@@ -96,7 +123,9 @@ public class IndexModel : PageModel
             nameof(Sucursal.Nombre),
             SucursalId);
     }
-    public async Task<IActionResult> OnPostRetirarAsync(int id)
+    public async Task<IActionResult> OnPostRetirarAsync(
+        int id,
+        int? sucursalId)
     {
         var usuarioActual = await _userManager.GetUserAsync(User);
 
@@ -121,8 +150,11 @@ public class IndexModel : PageModel
                 return Forbid();
             }
 
-            consulta = consulta.Where(
-                i => i.SucursalId == usuarioActual.SucursalId.Value);
+            int sucursalGerenteId = usuarioActual.SucursalId.Value;
+
+            consulta = consulta.Where(i =>
+                i.SucursalId == sucursalGerenteId &&
+                i.Sucursal.Activa);
         }
 
         var inventario = await consulta.FirstOrDefaultAsync();
@@ -132,17 +164,40 @@ public class IndexModel : PageModel
             return NotFound();
         }
 
-        /*
-        * Más adelante, cuando implementemos ventas,
-        * podremos comprobar si existen operaciones pendientes.
-        */
+        if (inventario.Stock > 0)
+        {
+            TempData["MensajeError"] =
+                $"No se puede retirar {inventario.Producto.Nombre} porque todavía tiene {inventario.Stock} unidades.";
+
+            return RedirectToPage(new
+            {
+                SucursalId = sucursalId
+            });
+        }
+
         _context.InventariosSucursales.Remove(inventario);
 
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            TempData["MensajeError"] =
+                "No se pudo retirar el producto porque existen datos relacionados.";
+
+            return RedirectToPage(new
+            {
+                SucursalId = sucursalId
+            });
+        }
 
         TempData["MensajeExito"] =
             $"{inventario.Producto.Nombre} fue retirado del inventario de {inventario.Sucursal.Nombre}.";
 
-        return RedirectToPage();
+        return RedirectToPage(new
+        {
+            SucursalId = sucursalId
+        });
     }
 }

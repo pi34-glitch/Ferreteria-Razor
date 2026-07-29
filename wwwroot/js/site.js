@@ -36,25 +36,4 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         });
-
-    const rutaActual = window.location.pathname.toLowerCase();
-
-    document
-        .querySelectorAll(".sidebar-link")
-        .forEach(function (enlace) {
-            const rutaEnlace = enlace
-                .getAttribute("href")
-                ?.toLowerCase();
-
-            if (
-                rutaEnlace &&
-                rutaEnlace !== "#" &&
-                (
-                    rutaActual === rutaEnlace ||
-                    rutaActual.startsWith(rutaEnlace + "/")
-                )
-            ) {
-                enlace.classList.add("active");
-            }
-        });
 });

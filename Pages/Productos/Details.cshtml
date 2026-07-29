@@ -236,9 +236,7 @@
 
                                     <tbody>
 
-                                        @foreach (var inventario in
-                                            Model.Producto
-                                                .InventariosSucursales)
+                                        @foreach (var inventario in Model.InventariosVisibles)
                                         {
                                             <tr>
 
@@ -287,15 +285,25 @@
 
                                                 <td class="text-end">
 
-                                                    <a asp-page="/Inventario/Editar"
-                                                       asp-route-id="@inventario.Id"
-                                                       class="btn btn-sm
-                                                              btn-outline-primary">
+                                                    @if (Model.EsAdministrador || Model.EsGerente)
+                                                    {
+                                                        <a asp-page="/Inventario/Editar"
+                                                        asp-route-id="@inventario.Id"
+                                                        class="btn btn-sm btn-outline-primary"
+                                                        title="Editar inventario"
+                                                        aria-label="Editar inventario">
 
-                                                        <i class="bi bi-pencil"></i>
-                                                        Editar inventario
+                                                            <i class="bi bi-pencil"></i>
+                                                            Editar inventario
 
-                                                    </a>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">
+                                                            Solo lectura
+                                                        </span>
+                                                    }
 
                                                 </td>
 

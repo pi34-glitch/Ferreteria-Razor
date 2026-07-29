@@ -3,9 +3,11 @@ using FerreteriaRazor.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FerreteriaRazor.Pages.Productos;
 
+[Authorize(Roles = "Administrador")]
 public class DeleteModel : PageModel
 {
     private readonly ApplicationDbContext _context;

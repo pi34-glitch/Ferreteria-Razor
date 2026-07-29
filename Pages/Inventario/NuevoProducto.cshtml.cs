@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FerreteriaRazor.Pages.Inventario;
 
-[Authorize(Roles = "Administrador,Gerente")]
+[Authorize(Roles = "Administrador")]
 public class NuevoProductoModel : PageModel
 {
     private readonly ApplicationDbContext _context;

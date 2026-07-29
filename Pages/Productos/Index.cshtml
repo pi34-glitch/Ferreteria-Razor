@@ -24,21 +24,45 @@
 <div class="page-heading">
 
     <div>
-        <h2>Inventario de productos</h2>
+        @if (Model.EsAdministrador)
+        {
+            <h1 class="h3 mb-1">Catálogo de productos</h1>
 
-        <p>
-            Administra los productos, precios, stock e imágenes.
-        </p>
+            <p class="text-muted">
+                Administra productos, precios, categorías, marcas e imágenes.
+            </p>
+        }
+        else if (Model.EsGerente)
+        {
+            <h1 class="h3 mb-1">Productos de mi sucursal</h1>
+
+            <p class="text-muted">
+                Consulta productos y administra el inventario de tu sucursal.
+            </p>
+        }
+        else
+        {
+            <h1 class="h3 mb-1">Productos disponibles</h1>
+
+            <p class="text-muted">
+                Consulta productos, precios y existencias de tu sucursal.
+            </p>
+        }
     </div>
+    @if (Model.EsAdministrador || Model.EsGerente)
+    {
+        <div class="ms-auto">
 
-    <a asp-page="./Create"
-       class="btn btn-primary btn-modern">
+            <a asp-page="./Create"
+               class="btn btn-primary btn-modern">
 
-        <i class="bi bi-plus-lg"></i>
-        Nuevo producto
+                <i class="bi bi-plus-lg"></i>
+                Nuevo producto
 
-    </a>
+            </a>
 
+        </div>
+    }
 </div>
 
 <div class="content-card">
@@ -90,23 +114,21 @@
                 <tbody>
 
                     @foreach (var producto in Model.Productos)
-                    {
+                    {   
                         <tr>
 
                             <td>
                                 <div class="d-flex align-items-center gap-3">
 
-                                    @if (!string.IsNullOrWhiteSpace(
-                                        producto.ImagenUrl))
+                                    @if (!string.IsNullOrWhiteSpace(producto.ImagenUrl))
                                     {
                                         <img src="@producto.ImagenUrl"
-                                             alt="@producto.Nombre"
-                                             class="product-image" />
+                                            alt="@producto.Nombre"
+                                            class="product-image" />
                                     }
                                     else
                                     {
-                                        <div class="product-image d-grid
-                                                    place-items-center">
+                                        <div class="product-image d-grid place-items-center">
                                             <i class="bi bi-image text-muted"></i>
                                         </div>
                                     }
@@ -117,12 +139,9 @@
                                         </strong>
 
                                         <small class="text-muted">
-                                            @(
-                                                string.IsNullOrWhiteSpace(
-                                                    producto.Descripcion)
-                                                    ? "Sin descripción"
-                                                    : producto.Descripcion
-                                            )
+                                            @(string.IsNullOrWhiteSpace(producto.Descripcion)
+                                                ? "Sin descripción"
+                                                : producto.Descripcion)
                                         </small>
                                     </div>
 
@@ -131,16 +150,22 @@
 
                             <td>
                                 <span class="text-muted">
-                                    @(producto.Codigo ?? "—")
+                                    @(string.IsNullOrWhiteSpace(producto.Codigo)
+                                        ? "—"
+                                        : producto.Codigo)
                                 </span>
                             </td>
 
                             <td>
-                                @(producto.Categoria?.Nombre ?? "Sin categoría")
+                                @(string.IsNullOrWhiteSpace(producto.Categoria)
+                                    ? "Sin categoría"
+                                    : producto.Categoria)
                             </td>
 
                             <td>
-                                @(producto.Marca?.Nombre ?? "Sin marca")
+                                @(string.IsNullOrWhiteSpace(producto.Marca)
+                                    ? "Sin marca"
+                                    : producto.Marca)
                             </td>
 
                             <td>
@@ -150,11 +175,43 @@
                             </td>
 
                             <td>
+                                @if (producto.Stock.HasValue)
+                                {
+                                    <div class="fw-semibold">
+                                        @producto.Stock
+                                    </div>
+
+                                    @if (producto.Stock == 0)
+                                    {
+                                        <span class="badge bg-danger">
+                                            Agotado
+                                        </span>
+                                    }
+                                    else if (producto.Stock <= producto.StockMinimo)
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Stock bajo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">
+                                            Disponible
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+
+                            <td>
                                 @if (producto.Activo)
                                 {
                                     <span class="status-badge status-active">
                                         <i class="bi bi-circle-fill"
-                                           style="font-size: 6px;">
+                                        style="font-size: 6px;">
                                         </i>
                                         Activo
                                     </span>
@@ -163,42 +220,63 @@
                                 {
                                     <span class="status-badge status-inactive">
                                         <i class="bi bi-circle-fill"
-                                           style="font-size: 6px;">
+                                        style="font-size: 6px;">
                                         </i>
                                         Inactivo
                                     </span>
                                 }
                             </td>
 
-                            <td class="text-end">
+                            <td>
+                                <div class="d-flex gap-2">
 
-                                <a asp-page="./Details"
-                                   asp-route-id="@producto.Id"
-                                   class="btn btn-sm btn-light action-button"
-                                   title="Ver detalles">
+                                    <a asp-page="./Details"
+                                    asp-route-id="@producto.ProductoId"
+                                    class="btn btn-light btn-sm"
+                                    title="Ver detalles"
+                                    aria-label="Ver detalles">
 
-                                    <i class="bi bi-eye"></i>
+                                        <i class="bi bi-eye"></i>
 
-                                </a>
+                                    </a>
 
-                                <a asp-page="./Edit"
-                                   asp-route-id="@producto.Id"
-                                   class="btn btn-sm btn-warning action-button"
-                                   title="Editar">
+                                    @if (Model.EsAdministrador)
+                                    {
+                                        <a asp-page="./Edit"
+                                        asp-route-id="@producto.ProductoId"
+                                        class="btn btn-warning btn-sm"
+                                        title="Editar producto"
+                                        aria-label="Editar producto">
 
-                                    <i class="bi bi-pencil"></i>
+                                            <i class="bi bi-pencil"></i>
 
-                                </a>
+                                        </a>
 
-                                <a asp-page="./Delete"
-                                   asp-route-id="@producto.Id"
-                                   class="btn btn-sm btn-danger action-button"
-                                   title="Eliminar">
+                                        <a asp-page="./Delete"
+                                        asp-route-id="@producto.ProductoId"
+                                        class="btn btn-danger btn-sm"
+                                        title="Eliminar producto"
+                                        aria-label="Eliminar producto">
 
-                                    <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash"></i>
 
-                                </a>
+                                        </a>
+                                    }
+                                    else if (Model.EsGerente &&
+                                            producto.InventarioSucursalId.HasValue)
+                                    {
+                                        <a asp-page="/Inventario/Editar"
+                                        asp-route-id="@producto.InventarioSucursalId"
+                                        class="btn btn-warning btn-sm"
+                                        title="Editar inventario"
+                                        aria-label="Editar inventario">
 
+                                            <i class="bi bi-box-seam"></i>
+
+                                        </a>
+                                    }
+
+                                </div>
                             </td>
 
                         </tr>

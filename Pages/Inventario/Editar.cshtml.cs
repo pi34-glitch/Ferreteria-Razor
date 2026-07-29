@@ -30,6 +30,8 @@ public class EditarModel : PageModel
 
     public string NombreSucursal { get; set; } = string.Empty;
 
+    public string CodigoProducto { get; set; } = string.Empty;
+
     public class InputModel
     {
         [Required]
@@ -50,6 +52,7 @@ public class EditarModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
+        
         var inventario = await BuscarInventarioAutorizadoAsync(id);
 
         if (inventario is null)
@@ -66,8 +69,10 @@ public class EditarModel : PageModel
 
         NombreProducto = inventario.Producto.Nombre;
         NombreSucursal = inventario.Sucursal.Nombre;
+        CodigoProducto = inventario.Producto.Codigo;
 
         return Page();
+        
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -87,16 +92,39 @@ public class EditarModel : PageModel
             return Page();
         }
 
+        bool huboCambios =
+            inventario.Stock != Input.Stock ||
+            inventario.StockMinimo != Input.StockMinimo;
+        if (!huboCambios)
+        {
+            TempData["MensajeInfo"] =
+                "No se realizaron cambios en el inventario.";
+
+            return RedirectToPage("./Index");
+        }
         inventario.Stock = Input.Stock;
         inventario.StockMinimo = Input.StockMinimo;
         inventario.FechaActualizacion = DateTime.UtcNow;
+        CodigoProducto = inventario.Producto.Codigo;
 
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                "No se pudo actualizar el inventario. Intente nuevamente.");
 
+            return Page();
+        }
+    
         TempData["MensajeExito"] =
             "El inventario fue actualizado correctamente.";
 
         return RedirectToPage("./Index");
+        
     }
 
     private async Task<InventarioSucursal?>
@@ -116,17 +144,20 @@ public class EditarModel : PageModel
         var consulta = _context.InventariosSucursales
             .Include(i => i.Producto)
             .Include(i => i.Sucursal)
-            .Where(i => i.Id == id);
-
+            .Where(i =>
+                i.Id == id &&
+                i.Producto.Activo);
         if (!esAdministrador)
         {
             if (!usuarioActual.SucursalId.HasValue)
             {
                 return null;
             }
+            int sucursalId = usuarioActual.SucursalId.Value;
 
-            consulta = consulta.Where(
-                i => i.SucursalId == usuarioActual.SucursalId.Value);
+            consulta = consulta.Where(i =>
+                i.SucursalId == sucursalId &&
+                i.Sucursal.Activa);
         }
 
         return await consulta.FirstOrDefaultAsync();

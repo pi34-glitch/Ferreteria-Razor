@@ -3,6 +3,7 @@ using System;
 using FerreteriaRazor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ferreteria.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260727201716_MoverStockAInventarioSucursal")]
+    partial class MoverStockAInventarioSucursal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,38 +125,6 @@ namespace Ferreteria.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categorias");
-                });
-
-            modelBuilder.Entity("FerreteriaRazor.Models.DetalleVenta", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("numeric(12,2)");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Subtotal")
-                        .HasColumnType("numeric(12,2)");
-
-                    b.Property<int>("VentaId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductoId");
-
-                    b.HasIndex("VentaId");
-
-                    b.ToTable("DetallesVenta");
                 });
 
             modelBuilder.Entity("FerreteriaRazor.Models.Distribuidora", b =>
@@ -335,39 +306,6 @@ namespace Ferreteria.Migrations
                     b.ToTable("Sucursales");
                 });
 
-            modelBuilder.Entity("FerreteriaRazor.Models.Venta", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("MetodoPago")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SucursalId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("numeric(12,2)");
-
-                    b.Property<string>("UsuarioId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SucursalId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Ventas");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -510,25 +448,6 @@ namespace Ferreteria.Migrations
                     b.Navigation("Sucursal");
                 });
 
-            modelBuilder.Entity("FerreteriaRazor.Models.DetalleVenta", b =>
-                {
-                    b.HasOne("FerreteriaRazor.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FerreteriaRazor.Models.Venta", "Venta")
-                        .WithMany("Detalles")
-                        .HasForeignKey("VentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Producto");
-
-                    b.Navigation("Venta");
-                });
-
             modelBuilder.Entity("FerreteriaRazor.Models.InventarioSucursal", b =>
                 {
                     b.HasOne("FerreteriaRazor.Models.Producto", "Producto")
@@ -573,25 +492,6 @@ namespace Ferreteria.Migrations
                     b.Navigation("Distribuidora");
 
                     b.Navigation("Marca");
-                });
-
-            modelBuilder.Entity("FerreteriaRazor.Models.Venta", b =>
-                {
-                    b.HasOne("FerreteriaRazor.Models.Sucursal", "Sucursal")
-                        .WithMany()
-                        .HasForeignKey("SucursalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FerreteriaRazor.Models.ApplicationUser", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Sucursal");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -670,11 +570,6 @@ namespace Ferreteria.Migrations
                     b.Navigation("InventariosSucursales");
 
                     b.Navigation("Usuarios");
-                });
-
-            modelBuilder.Entity("FerreteriaRazor.Models.Venta", b =>
-                {
-                    b.Navigation("Detalles");
                 });
 #pragma warning restore 612, 618
         }

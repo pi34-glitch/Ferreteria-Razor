@@ -12,10 +12,11 @@
         <div class="d-flex align-items-center mb-4">
 
             <a asp-page="./Index"
-               class="btn btn-light me-3">
+                class="btn btn-light me-3"
+                title="Volver al inventario"
+                aria-label="Volver al inventario">
 
-                <i class="bi bi-arrow-left"></i>
-
+                    <i class="bi bi-arrow-left"></i>
             </a>
 
             <div>
@@ -38,7 +39,7 @@
 
                     <div>
                         <strong>Producto:</strong>
-                        @Model.NombreProducto
+                        @Model.CodigoProducto - @Model.NombreProducto
                     </div>
 
                     <div>
@@ -54,21 +55,24 @@
                            asp-for="Input.Id" />
 
                     <div asp-validation-summary="ModelOnly"
-                         class="alert alert-danger">
+                        class="alert alert-danger"
+                        role="alert">
                     </div>
 
                     <div class="mb-3">
 
                         <label asp-for="Input.Stock"
-                               class="form-label">
+                            class="form-label">
                         </label>
 
                         <input asp-for="Input.Stock"
-                               class="form-control"
-                               min="0" />
+                            type="number"
+                            class="form-control"
+                            min="0"
+                            step="1" />
 
                         <span asp-validation-for="Input.Stock"
-                              class="text-danger">
+                            class="text-danger">
                         </span>
 
                     </div>
@@ -76,15 +80,21 @@
                     <div class="mb-3">
 
                         <label asp-for="Input.StockMinimo"
-                               class="form-label">
+                            class="form-label">
                         </label>
 
                         <input asp-for="Input.StockMinimo"
-                               class="form-control"
-                               min="0" />
+                            type="number"
+                            class="form-control"
+                            min="0"
+                            step="1" />
+
+                        <div class="form-text">
+                            El producto aparecerá como stock bajo cuando su existencia sea igual o menor a este valor.
+                        </div>
 
                         <span asp-validation-for="Input.StockMinimo"
-                              class="text-danger">
+                            class="text-danger">
                         </span>
 
                     </div>
@@ -97,9 +107,9 @@
                         </a>
 
                         <button type="submit"
-                                class="btn btn-warning">
+                                class="btn btn-primary">
 
-                            <i class="bi bi-save"></i>
+                            <i class="bi bi-save me-1"></i>
                             Guardar cambios
 
                         </button>

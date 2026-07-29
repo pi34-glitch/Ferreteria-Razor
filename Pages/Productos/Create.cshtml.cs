@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FerreteriaRazor.Pages.Productos;
 
-[Authorize(Roles = "Administrador,Gerente")]
+[Authorize(Roles = "Administrador")]
 public class CreateModel : PageModel
 {
     

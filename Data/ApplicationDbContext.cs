@@ -19,7 +19,8 @@ public class ApplicationDbContext
     public DbSet<Distribuidora> Distribuidoras { get; set; } = null!;
     public DbSet<Sucursal> Sucursales { get; set; } = null!; 
     public DbSet<InventarioSucursal> InventariosSucursales { get; set; } = null!;
-
+    public DbSet<Venta> Ventas { get; set; } = null!;
+    public DbSet<DetalleVenta> DetallesVenta { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -66,6 +67,30 @@ public class ApplicationDbContext
             .HasOne(i => i.Sucursal)
             .WithMany(s => s.InventariosSucursales)
             .HasForeignKey(i => i.SucursalId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Venta>()
+            .HasOne(v => v.Sucursal)
+            .WithMany()
+            .HasForeignKey(v => v.SucursalId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Venta>()
+            .HasOne(v => v.Usuario)
+            .WithMany()
+            .HasForeignKey(v => v.UsuarioId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DetalleVenta>()
+            .HasOne(d => d.Venta)
+            .WithMany(v => v.Detalles)
+            .HasForeignKey(d => d.VentaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DetalleVenta>()
+            .HasOne(d => d.Producto)
+            .WithMany()
+            .HasForeignKey(d => d.ProductoId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
