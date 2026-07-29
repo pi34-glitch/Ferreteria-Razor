@@ -159,12 +159,13 @@ public class LoginModel : PageModel
             usuario,
             Input.Recordarme,
             claims);
+        Console.WriteLine("LOGIN EXITOSO");
 
         if (Url.IsLocalUrl(ReturnUrl))
         {
             return LocalRedirect(ReturnUrl);
         }
-
+        Console.WriteLine("REDIRIGIENDO AL INDEX");
         return RedirectToPage("/Index");
     }
 

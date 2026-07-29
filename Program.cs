@@ -1,17 +1,25 @@
 using FerreteriaRazor.Data;
+using FerreteriaRazor.Data.Seed;
 using FerreteriaRazor.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using FerreteriaRazor.Data.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de PostgreSQL
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Configuración de Identity
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "No se configuró la cadena de conexión DefaultConnection.");
+}
+
+// PostgreSQL
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+// Identity
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
@@ -30,12 +38,12 @@ builder.Services
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-    
+
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
     options.ValidationInterval = TimeSpan.FromMinutes(1);
 });
-// Configuración de la cookie del login
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -43,9 +51,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
     options.SlidingExpiration = true;
+
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy =
+        CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite =
+        SameSiteMode.Lax;
 });
 
-// Razor Pages
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AllowAnonymousToPage("/Account/Login");
@@ -65,19 +78,24 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Identity debe ir después de UseRouting
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+// Migraciones y datos iniciales
 using (var scope = app.Services.CreateScope())
 {
     var servicios = scope.ServiceProvider;
+    var logger = servicios
+        .GetRequiredService<ILogger<Program>>();
 
     try
     {
         var context = servicios
             .GetRequiredService<ApplicationDbContext>();
+
+        await context.Database.MigrateAsync();
 
         var userManager = servicios
             .GetRequiredService<UserManager<ApplicationUser>>();
@@ -92,12 +110,12 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        var logger = servicios
-            .GetRequiredService<ILogger<Program>>();
-
-        logger.LogError(
+        logger.LogCritical(
             ex,
-            "Ocurrió un error al inicializar la base de datos.");
+            "No se pudo preparar la base de datos.");
+
+        throw;
     }
 }
+
 app.Run();
