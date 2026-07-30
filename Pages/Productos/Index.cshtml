@@ -1,9 +1,19 @@
 @page
 @model FerreteriaRazor.Pages.Productos.IndexModel
+@using System.Text.Json
 
 @{
     ViewData["Title"] = "Productos";
+
+    var opcionesJson = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
+    var productosJson = JsonSerializer.Serialize(Model.Productos, opcionesJson);
 }
+
+<link rel="stylesheet" href="~/js/tablas/productos-tabla/productos-tabla.css" asp-append-version="true" />
 
 @if (TempData["Mensaje"] is not null)
 {
@@ -110,199 +120,20 @@
     }
     else
     {
-        <div class="table-responsive">
-
-            <table class="table table-modern align-middle">
-
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Código</th>
-                        <th>Categoría</th>
-                        <th>Marca</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Estado</th>
-                        <th class="text-end">Acciones</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @foreach (var producto in Model.Productos)
-                    {   
-                        <tr>
-
-                            <td>
-                                <div class="d-flex align-items-center gap-3">
-
-                                    @if (!string.IsNullOrWhiteSpace(producto.ImagenUrl))
-                                    {
-                                        <img src="@producto.ImagenUrl"
-                                            alt="@producto.Nombre"
-                                            class="product-image" />
-                                    }
-                                    else
-                                    {
-                                        <div class="product-image d-grid place-items-center">
-                                            <i class="bi bi-image text-muted"></i>
-                                        </div>
-                                    }
-
-                                    <div>
-                                        <strong class="d-block">
-                                            @producto.Nombre
-                                        </strong>
-
-                                        <small class="text-muted">
-                                            @(string.IsNullOrWhiteSpace(producto.Descripcion)
-                                                ? "Sin descripción"
-                                                : producto.Descripcion)
-                                        </small>
-                                    </div>
-
-                                </div>
-                            </td>
-
-                            <td>
-                                <span class="text-muted">
-                                    @(string.IsNullOrWhiteSpace(producto.Codigo)
-                                        ? "—"
-                                        : producto.Codigo)
-                                </span>
-                            </td>
-
-                            <td>
-                                @(string.IsNullOrWhiteSpace(producto.Categoria)
-                                    ? "Sin categoría"
-                                    : producto.Categoria)
-                            </td>
-
-                            <td>
-                                @(string.IsNullOrWhiteSpace(producto.Marca)
-                                    ? "Sin marca"
-                                    : producto.Marca)
-                            </td>
-
-                            <td>
-                                <strong>
-                                    Bs @producto.Precio.ToString("N2")
-                                </strong>
-                            </td>
-
-                            <td>
-                                @if (producto.Stock.HasValue)
-                                {
-                                    <div class="fw-semibold">
-                                        @producto.Stock
-                                    </div>
-
-                                    @if (producto.Stock == 0)
-                                    {
-                                        <span class="badge bg-danger">
-                                            Agotado
-                                        </span>
-                                    }
-                                    else if (producto.Stock <= producto.StockMinimo)
-                                    {
-                                        <span class="badge bg-warning text-dark">
-                                            Stock bajo
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">
-                                            Disponible
-                                        </span>
-                                    }
-                                }
-                                else
-                                {
-                                    <span class="text-muted">—</span>
-                                }
-                            </td>
-
-                            <td>
-                                @if (producto.Activo)
-                                {
-                                    <span class="status-badge status-active">
-                                        <i class="bi bi-circle-fill"
-                                        style="font-size: 6px;">
-                                        </i>
-                                        Activo
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="status-badge status-inactive">
-                                        <i class="bi bi-circle-fill"
-                                        style="font-size: 6px;">
-                                        </i>
-                                        Inactivo
-                                    </span>
-                                }
-                            </td>
-
-                            <td>
-                                <div class="d-flex gap-2">
-
-                                    <a asp-page="./Details"
-                                    asp-route-id="@producto.ProductoId"
-                                    class="btn btn-light btn-sm"
-                                    title="Ver detalles"
-                                    aria-label="Ver detalles">
-
-                                        <i class="bi bi-eye"></i>
-
-                                    </a>
-
-                                    @if (Model.EsAdministrador)
-                                    {
-                                        <a asp-page="./Edit"
-                                        asp-route-id="@producto.ProductoId"
-                                        class="btn btn-warning btn-sm"
-                                        title="Editar producto"
-                                        aria-label="Editar producto">
-
-                                            <i class="bi bi-pencil"></i>
-
-                                        </a>
-
-                                        <a asp-page="./Delete"
-                                        asp-route-id="@producto.ProductoId"
-                                        class="btn btn-danger btn-sm"
-                                        title="Eliminar producto"
-                                        aria-label="Eliminar producto">
-
-                                            <i class="bi bi-trash"></i>
-
-                                        </a>
-                                    }
-                                    else if (Model.EsGerente &&
-                                            producto.InventarioSucursalId.HasValue)
-                                    {
-                                        <a asp-page="/Inventario/Editar"
-                                        asp-route-id="@producto.InventarioSucursalId"
-                                        class="btn btn-warning btn-sm"
-                                        title="Editar inventario"
-                                        aria-label="Editar inventario">
-
-                                            <i class="bi bi-box-seam"></i>
-
-                                        </a>
-                                    }
-
-                                </div>
-                            </td>
-
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
-
+        <div id="productos-tabla-root"
+             data-es-administrador="@Model.EsAdministrador.ToString().ToLowerInvariant()"
+             data-es-gerente="@Model.EsGerente.ToString().ToLowerInvariant()"
+             data-details-url-base="@Url.Page("./Details")?id="
+             data-edit-url-base="@Url.Page("./Edit")?id="
+             data-delete-url-base="@Url.Page("./Delete")?id="
+             data-editar-inventario-url-base="@Url.Page("/Inventario/Editar")?id=">
         </div>
+
+        <script type="application/json" id="productos-data">@Html.Raw(productosJson)</script>
     }
 
 </div>
+
+@section Scripts {
+    <script src="~/js/tablas/productos-tabla/productos-tabla.js" asp-append-version="true"></script>
+}

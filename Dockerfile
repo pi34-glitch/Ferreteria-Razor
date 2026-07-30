@@ -12,6 +12,21 @@ COPY clientapp/nueva-venta/. .
 RUN npm run build
 
 
+# Etapa de compilación del cliente React de tablas (Productos,
+# Inventario, Historial de ventas)
+FROM node:20-alpine AS tablasbuild
+
+WORKDIR /client
+
+COPY clientapp/tablas/package*.json ./
+
+RUN npm ci
+
+COPY clientapp/tablas/. .
+
+RUN npm run build
+
+
 # Etapa de compilación de .NET
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
@@ -24,6 +39,7 @@ RUN dotnet restore "Ferreteria.csproj"
 COPY . .
 
 COPY --from=clientbuild /client/dist/. ./wwwroot/js/nueva-venta/
+COPY --from=tablasbuild /client/dist/. ./wwwroot/js/tablas/
 
 RUN dotnet publish "Ferreteria.csproj" \
     -c Release \

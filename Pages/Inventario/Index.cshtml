@@ -1,9 +1,31 @@
 @page
 @model FerreteriaRazor.Pages.Inventario.IndexModel
+@using System.Text.Json
 
 @{
     ViewData["Title"] = "Inventario por sucursal";
+
+    var opcionesJson = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
+    var inventariosJson = JsonSerializer.Serialize(
+        Model.Inventarios.Select(i => new
+        {
+            i.Id,
+            Nombre = i.Producto.Nombre,
+            Codigo = i.Producto.Codigo,
+            Sucursal = i.Sucursal.Nombre,
+            i.Stock,
+            i.StockMinimo,
+            FechaTexto = i.FechaActualizacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm"),
+            FechaOrden = i.FechaActualizacion.Ticks
+        }),
+        opcionesJson);
 }
+
+<link rel="stylesheet" href="~/js/tablas/inventario-tabla/inventario-tabla.css" asp-append-version="true" />
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -169,85 +191,16 @@
         }
         else
         {
-            <div class="table-responsive">
-
-                <table class="table align-middle">
-
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Sucursal</th>
-                            <th>Stock</th>
-                            <th>Stock mínimo</th>
-                            <th>Actualización</th>
-                            <th class="text-end">Acciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        @foreach (var inventario in Model.Inventarios)
-                        {
-                            var stockBajo =
-                                inventario.Stock <= inventario.StockMinimo;
-
-                                <tr class="@(inventario.Stock == 0
-                                    ? "table-danger"
-                                    : stockBajo
-                                        ? "table-warning"
-                                        : string.Empty)">
-                                <td>
-                                    <div>
-                                        <strong>
-                                            @inventario.Producto.Nombre
-                                        </strong>
-
-                                        <div class="small text-muted">
-                                            @inventario.Producto.Codigo
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    @inventario.Sucursal.Nombre
-                                </td>
-
-                                <td>
-                                    <span class="fw-bold">
-                                        @inventario.Stock
-                                    </span>
-                                </td>
-
-                                <td>
-                                    @inventario.StockMinimo
-                                </td>
-
-                                <td>
-                                    @(inventario.FechaActualizacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))
-                                </td>
-
-                                <td class="text-end">
-
-                                    <a asp-page="./Editar"
-                                    asp-route-id="@inventario.Id"
-                                    class="btn btn-sm btn-outline-primary">
-
-                                        <i class="bi bi-pencil"></i>
-                                        Editar
-
-                                    </a>
-
-                                </td>
-
-                            </tr>
-                        }
-
-                    </tbody>
-
-                </table>
-
+            <div id="inventario-tabla-root"
+                 data-editar-url-base="@Url.Page("./Editar")?id=">
             </div>
+
+            <script type="application/json" id="inventarios-data">@Html.Raw(inventariosJson)</script>
         }
 
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/tablas/inventario-tabla/inventario-tabla.js" asp-append-version="true"></script>
+}
