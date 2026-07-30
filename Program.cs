@@ -80,6 +80,19 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AllowAnonymousToPage("/Account/AccessDenied");
 });
 
+/*
+ * Los modelos de EF Core (Producto, InventarioSucursal, etc.) tienen
+ * propiedades de navegación no-nulables (ej. Producto.Categoria) que
+ * los formularios nunca envían directamente (solo envían el Id).
+ * Sin esto, ASP.NET Core las trata como [Required] implícito por ser
+ * tipos de referencia no-nulables, y el ModelState queda inválido en
+ * cada POST aunque el formulario esté correctamente completado.
+ */
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(options =>
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
+
 var app = builder.Build();
 
 // Render (y otros PaaS) terminan TLS en un proxy inverso y
