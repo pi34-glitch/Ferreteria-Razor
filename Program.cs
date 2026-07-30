@@ -1,3 +1,4 @@
+using CloudinaryDotNet;
 using FerreteriaRazor.Data;
 using FerreteriaRazor.Data.Seed;
 using FerreteriaRazor.Models;
@@ -19,6 +20,19 @@ if (string.IsNullOrWhiteSpace(connectionString))
 // PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Cloudinary (almacenamiento de imágenes de productos).
+// Render usa un filesystem efímero, así que las imágenes no pueden
+// guardarse en disco local: se suben a Cloudinary y se guarda la URL.
+var cloudinaryAccount = new Account(
+    builder.Configuration["Cloudinary:CloudName"],
+    builder.Configuration["Cloudinary:ApiKey"],
+    builder.Configuration["Cloudinary:ApiSecret"]);
+
+builder.Services.AddSingleton(new Cloudinary(cloudinaryAccount)
+{
+    Api = { Secure = true }
+});
 
 // Identity
 builder.Services
