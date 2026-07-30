@@ -1,15 +1,19 @@
 @page
 @model FerreteriaRazor.Pages.Ventas.NuevaModel
-@using FerreteriaRazor.Models
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
     ViewData["Title"] = "Nueva venta";
     ViewData["MenuActivo"] = "NuevaVenta";
+
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
 }
+
+<link rel="stylesheet" href="~/js/nueva-venta/nueva-venta.css" asp-append-version="true" />
 
 <div class="row justify-content-center">
 
-    <div class="col-lg-7">
+    <div class="col-lg-9">
 
         <div class="mb-4">
             <h1 class="h3 mb-1">
@@ -17,7 +21,8 @@
             </h1>
 
             <p class="text-muted mb-0">
-                Registra una venta y descuenta automáticamente el inventario.
+                Agrega los productos, revisa el total y confirma la venta.
+                El inventario se descuenta automáticamente.
             </p>
         </div>
 
@@ -39,147 +44,13 @@
             </div>
         }
 
-        <div class="card border-0 shadow-sm">
-
-            <div class="card-body p-4">
-
-                <div class="alert alert-light border mb-4">
-                    <strong>Sucursal:</strong>
-                    @Model.NombreSucursal
-                </div>
-
-                <form method="post">
-
-                    <div asp-validation-summary="All"
-                         class="alert alert-danger"
-                         role="alert">
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label asp-for="Input.ProductoId"
-                               class="form-label">
-                        </label>
-
-                        <select asp-for="Input.ProductoId"
-                                asp-items="Model.ListaProductos"
-                                class="form-select">
-
-                            <option value="" disabled>
-                                Seleccione un producto
-                            </option>
-
-                        </select>
-
-                        <span asp-validation-for="Input.ProductoId"
-                              class="text-danger">
-                        </span>
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label asp-for="Input.Cantidad"
-                               class="form-label">
-                        </label>
-
-                        <input asp-for="Input.Cantidad"
-                               type="number"
-                               class="form-control"
-                               min="1"
-                               step="1" />
-
-                        <span asp-validation-for="Input.Cantidad"
-                              class="text-danger">
-                        </span>
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label asp-for="Input.MetodoPago"
-                            class="form-label d-block">
-                        </label>
-
-                        <div class="row g-3">
-
-                            <div class="col-md-4">
-                                <input asp-for="Input.MetodoPago"
-                                    type="radio"
-                                    value="@MetodoPago.Efectivo"
-                                    class="btn-check"
-                                    id="pagoEfectivo" />
-
-                                <label class="btn btn-outline-success w-100 py-3"
-                                    for="pagoEfectivo">
-
-                                    <i class="bi bi-cash-stack d-block fs-4 mb-1"></i>
-                                    Efectivo
-
-                                </label>
-                            </div>
-
-                            <div class="col-md-4">
-                                <input asp-for="Input.MetodoPago"
-                                    type="radio"
-                                    value="@MetodoPago.QR"
-                                    class="btn-check"
-                                    id="pagoQr" />
-
-                                <label class="btn btn-outline-primary w-100 py-3"
-                                    for="pagoQr">
-
-                                    <i class="bi bi-qr-code d-block fs-4 mb-1"></i>
-                                    QR
-
-                                </label>
-                            </div>
-
-                            <div class="col-md-4">
-                                <input asp-for="Input.MetodoPago"
-                                    type="radio"
-                                    value="@MetodoPago.Tarjeta"
-                                    class="btn-check"
-                                    id="pagoTarjeta" />
-
-                                <label class="btn btn-outline-dark w-100 py-3"
-                                    for="pagoTarjeta">
-
-                                    <i class="bi bi-credit-card d-block fs-4 mb-1"></i>
-                                    Tarjeta
-
-                                </label>
-                            </div>
-
-                        </div>
-
-                        <span asp-validation-for="Input.MetodoPago"
-                            class="text-danger d-block mt-2">
-                        </span>
-
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-
-                        <a asp-page="/Index"
-                           class="btn btn-light">
-                            Cancelar
-                        </a>
-
-                        <button type="submit"
-                                class="btn btn-primary">
-
-                            <i class="bi bi-cart-check me-1"></i>
-                            Registrar venta
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
-
+        <div id="nueva-venta-root"
+             data-antiforgery-token="@token"
+             data-nombre-sucursal="@Model.NombreSucursal"
+             data-productos-url="@Url.Page(null, "Productos")"
+             data-confirmar-url="@Url.Page(null, "Confirmar")"
+             data-detalle-url-base="@Url.Page("Detalle")?id="
+             data-cancelar-url="@Url.Page("/Index")">
         </div>
 
     </div>
@@ -187,5 +58,5 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/nueva-venta/nueva-venta.js" asp-append-version="true"></script>
 }

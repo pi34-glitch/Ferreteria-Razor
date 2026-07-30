@@ -1,4 +1,18 @@
-# Etapa de compilación
+# Etapa de compilación del cliente React (isla de "Nueva venta")
+FROM node:20-alpine AS clientbuild
+
+WORKDIR /client
+
+COPY clientapp/nueva-venta/package*.json ./
+
+RUN npm ci
+
+COPY clientapp/nueva-venta/. .
+
+RUN npm run build
+
+
+# Etapa de compilación de .NET
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
@@ -8,6 +22,8 @@ COPY ["Ferreteria.csproj", "./"]
 RUN dotnet restore "Ferreteria.csproj"
 
 COPY . .
+
+COPY --from=clientbuild /client/dist/. ./wwwroot/js/nueva-venta/
 
 RUN dotnet publish "Ferreteria.csproj" \
     -c Release \

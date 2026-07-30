@@ -27,3 +27,8 @@ logs/
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+# Cliente React (clientapp/nueva-venta) — el bundle compilado se
+# genera en el build de Docker y se commitea en wwwroot/js aparte.
+clientapp/**/node_modules/
+clientapp/**/dist/
