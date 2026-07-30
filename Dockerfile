@@ -27,6 +27,21 @@ COPY clientapp/tablas/. .
 RUN npm run build
 
 
+# Etapa de compilación del cliente React del dashboard (tarjetas,
+# alertas y gráfico con auto-refresh)
+FROM node:20-alpine AS dashboardbuild
+
+WORKDIR /client
+
+COPY clientapp/dashboard/package*.json ./
+
+RUN npm ci
+
+COPY clientapp/dashboard/. .
+
+RUN npm run build
+
+
 # Etapa de compilación de .NET
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
@@ -40,6 +55,7 @@ COPY . .
 
 COPY --from=clientbuild /client/dist/. ./wwwroot/js/nueva-venta/
 COPY --from=tablasbuild /client/dist/. ./wwwroot/js/tablas/
+COPY --from=dashboardbuild /client/dist/. ./wwwroot/js/dashboard/
 
 RUN dotnet publish "Ferreteria.csproj" \
     -c Release \
