@@ -11,6 +11,12 @@
     };
 
     var datosJson = JsonSerializer.Serialize(Model.Datos, opcionesJson);
+
+    // /Inventario/Editar usa @page "{id:int}" (el id va como segmento de
+    // ruta, no como query string), así que hace falta generar la URL con
+    // un id "de mentira" y recortarlo para quedarnos con la base.
+    var editarInventarioUrlBase = Url.Page("/Inventario/Editar", new { id = 0 })!;
+    editarInventarioUrlBase = editarInventarioUrlBase.Substring(0, editarInventarioUrlBase.Length - 1);
 }
 
 <link rel="stylesheet" href="~/js/dashboard/dashboard.css" asp-append-version="true" />
@@ -83,7 +89,7 @@
          data-datos-url="@Url.Page(null, "Datos")"
          data-catalogo-url="@Url.Page("/Productos/Index")"
          data-inventario-url="@Url.Page("/Inventario/Index")"
-         data-editar-inventario-url-base="@Url.Page("/Inventario/Editar")?id=">
+         data-editar-inventario-url-base="@editarInventarioUrlBase">
     </div>
 
     <script type="application/json" id="dashboard-datos">@Html.Raw(datosJson)</script>
