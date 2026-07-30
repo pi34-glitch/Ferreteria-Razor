@@ -1,6 +1,7 @@
 using FerreteriaRazor.Data;
 using FerreteriaRazor.Data.Seed;
 using FerreteriaRazor.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,6 +68,16 @@ builder.Services.AddRazorPages(options =>
 
 var app = builder.Build();
 
+// Render (y otros PaaS) terminan TLS en un proxy inverso y
+// reenvían HTTP internamente; sin esto, UseHttpsRedirection/HSTS
+// no reconocen el esquema original y pueden causar loops de redirect.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto
+});
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -106,7 +117,8 @@ using (var scope = app.Services.CreateScope())
         await DbInitializer.InicializarAsync(
             context,
             userManager,
-            roleManager);
+            roleManager,
+            builder.Configuration);
     }
     catch (Exception ex)
     {

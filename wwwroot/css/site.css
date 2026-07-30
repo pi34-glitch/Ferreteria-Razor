@@ -612,6 +612,93 @@ textarea.form-control {
     color: var(--text-secondary);
 }
 
+/* UNIFICACIÓN DE COLOR EN COMPONENTES BOOTSTRAP */
+/*
+ * Varias páginas usan clases de Bootstrap "crudas"
+ * (btn-warning, btn-danger, btn-dark, card-header bg-*)
+ * que traían los colores por defecto de Bootstrap en vez
+ * de la paleta naranja/oscura del sitio. Se sobrescriben
+ * acá para que todas las secciones combinen.
+ */
+
+.btn-warning {
+    border-color: var(--warning);
+    background: var(--warning);
+    color: #ffffff;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+    border-color: #b45309;
+    background: #b45309;
+    color: #ffffff;
+}
+
+.btn-danger {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: #ffffff;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+    border-color: #b91c1c;
+    background: #b91c1c;
+    color: #ffffff;
+}
+
+.btn-dark {
+    border-color: var(--sidebar-background);
+    background: var(--sidebar-background);
+    color: #ffffff;
+}
+
+.btn-dark:hover,
+.btn-dark:focus {
+    border-color: var(--sidebar-secondary);
+    background: var(--sidebar-secondary);
+    color: #ffffff;
+}
+
+.btn-outline-primary {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.btn-outline-danger {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.btn-outline-danger:hover,
+.btn-outline-danger:focus {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: #ffffff;
+}
+
+.card-header.bg-dark {
+    background: linear-gradient(135deg, #111827, #1f2937) !important;
+    color: #ffffff !important;
+}
+
+.card-header.bg-warning {
+    background: var(--warning) !important;
+    color: #ffffff !important;
+}
+
+.card-header.bg-danger {
+    background: var(--danger) !important;
+    color: #ffffff !important;
+}
+
 /* RESPONSIVE */
 
 .sidebar-overlay {

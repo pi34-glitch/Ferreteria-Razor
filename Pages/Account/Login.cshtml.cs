@@ -59,7 +59,10 @@ public class LoginModel : PageModel
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            return RedirectToPage("/Index");
+            return RedirectToPage(
+                User.IsInRole("Administrador")
+                    ? "/Index"
+                    : "/Ventas/Nueva");
         }
 
         ReturnUrl = returnUrl ?? Url.Content("~/");
@@ -159,14 +162,15 @@ public class LoginModel : PageModel
             usuario,
             Input.Recordarme,
             claims);
-        Console.WriteLine("LOGIN EXITOSO");
 
-        if (Url.IsLocalUrl(ReturnUrl))
+        if (Url.IsLocalUrl(ReturnUrl) &&
+            ReturnUrl != Url.Content("~/"))
         {
             return LocalRedirect(ReturnUrl);
         }
-        Console.WriteLine("REDIRIGIENDO AL INDEX");
-        return RedirectToPage("/Index");
+
+        return RedirectToPage(
+            esAdministrador ? "/Index" : "/Ventas/Nueva");
     }
 
     private async Task CargarSucursalesAsync()

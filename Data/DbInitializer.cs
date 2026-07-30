@@ -1,6 +1,7 @@
 using FerreteriaRazor.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FerreteriaRazor.Data.Seed;
 
@@ -9,13 +10,14 @@ public static class DbInitializer
     public static async Task InicializarAsync(
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+        RoleManager<IdentityRole> roleManager,
+        IConfiguration configuration)
     {
         await context.Database.MigrateAsync();
 
         await CrearRolesAsync(roleManager);
         await CrearSucursalesAsync(context);
-        await CrearAdministradorAsync(userManager);
+        await CrearAdministradorAsync(userManager, configuration);
     }
 
     private static async Task CrearRolesAsync(
@@ -87,10 +89,23 @@ public static class DbInitializer
     }
 
     private static async Task CrearAdministradorAsync(
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IConfiguration configuration)
     {
-        const string correoAdministrador =
-            "admin@ferreteria.com";
+        var correoAdministrador =
+            configuration["AdminSeed:Email"];
+
+        var claveAdministrador =
+            configuration["AdminSeed:Password"];
+
+        if (string.IsNullOrWhiteSpace(correoAdministrador) ||
+            string.IsNullOrWhiteSpace(claveAdministrador))
+        {
+            // Sin credenciales configuradas no se crea un
+            // administrador por defecto (evita contraseñas
+            // conocidas en producción).
+            return;
+        }
 
         var administrador = await userManager
             .FindByEmailAsync(correoAdministrador);
@@ -111,7 +126,7 @@ public static class DbInitializer
 
             var resultado = await userManager.CreateAsync(
                 administrador,
-                "Admin1234");
+                claveAdministrador);
 
             if (!resultado.Succeeded)
             {
