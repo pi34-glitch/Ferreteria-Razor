@@ -11,6 +11,22 @@
     };
 
     var productosJson = JsonSerializer.Serialize(Model.Productos, opcionesJson);
+
+    // Details/Edit/Delete e Inventario/Editar usan una ruta con el id como
+    // segmento (@page "{id:int}"), no como query string. Url.Page no puede
+    // generar la URL sin el id, así que se genera con id=0 y se recorta el
+    // "0" final para quedarnos con la base y poder concatenar el id real
+    // desde React (?id= habría producido un enlace roto).
+    string ConstruirUrlBase(string pagina)
+    {
+        var url = Url.Page(pagina, new { id = 0 })!;
+        return url.Substring(0, url.Length - 1);
+    }
+
+    var detailsUrlBase = ConstruirUrlBase("./Details");
+    var editUrlBase = ConstruirUrlBase("./Edit");
+    var deleteUrlBase = ConstruirUrlBase("./Delete");
+    var editarInventarioUrlBase = ConstruirUrlBase("/Inventario/Editar");
 }
 
 <link rel="stylesheet" href="~/js/tablas/productos-tabla/productos-tabla.css" asp-append-version="true" />
@@ -123,10 +139,10 @@
         <div id="productos-tabla-root"
              data-es-administrador="@Model.EsAdministrador.ToString().ToLowerInvariant()"
              data-es-gerente="@Model.EsGerente.ToString().ToLowerInvariant()"
-             data-details-url-base="@Url.Page("./Details")?id="
-             data-edit-url-base="@Url.Page("./Edit")?id="
-             data-delete-url-base="@Url.Page("./Delete")?id="
-             data-editar-inventario-url-base="@Url.Page("/Inventario/Editar")?id=">
+             data-details-url-base="@detailsUrlBase"
+             data-edit-url-base="@editUrlBase"
+             data-delete-url-base="@deleteUrlBase"
+             data-editar-inventario-url-base="@editarInventarioUrlBase">
         </div>
 
         <script type="application/json" id="productos-data">@Html.Raw(productosJson)</script>

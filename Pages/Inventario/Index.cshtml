@@ -23,6 +23,12 @@
             FechaOrden = i.FechaActualizacion.Ticks
         }),
         opcionesJson);
+
+    // ./Editar usa @page "{id:int}" (el id va como segmento de ruta, no
+    // como query string), así que hace falta generar la URL con un id
+    // "de mentira" y recortarlo para quedarnos con la base.
+    var editarUrlBase = Url.Page("./Editar", new { id = 0 })!;
+    editarUrlBase = editarUrlBase.Substring(0, editarUrlBase.Length - 1);
 }
 
 <link rel="stylesheet" href="~/js/tablas/inventario-tabla/inventario-tabla.css" asp-append-version="true" />
@@ -192,7 +198,7 @@
         else
         {
             <div id="inventario-tabla-root"
-                 data-editar-url-base="@Url.Page("./Editar")?id=">
+                 data-editar-url-base="@editarUrlBase">
             </div>
 
             <script type="application/json" id="inventarios-data">@Html.Raw(inventariosJson)</script>
