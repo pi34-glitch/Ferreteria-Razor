@@ -1,3 +1,5 @@
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using FerreteriaRazor.Data;
 using FerreteriaRazor.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +14,14 @@ namespace FerreteriaRazor.Pages.Productos;
 public class EditModel : PageModel
 {
     private readonly ApplicationDbContext _context;
-    private readonly IWebHostEnvironment _environment;
+    private readonly Cloudinary _cloudinary;
 
     public EditModel(
         ApplicationDbContext context,
-        IWebHostEnvironment environment)
+        Cloudinary cloudinary)
     {
         _context = context;
-        _environment = environment;
+        _cloudinary = cloudinary;
     }
 
     [BindProperty]
@@ -85,12 +87,8 @@ public class EditModel : PageModel
                 return Page();
             }
 
-            var imagenAnterior = productoExistente.ImagenUrl;
-
             productoExistente.ImagenUrl =
                 await GuardarImagenAsync(NuevaImagen);
-
-            EliminarImagen(imagenAnterior);
         }
 
         productoExistente.Codigo = Producto.Codigo;
@@ -168,46 +166,22 @@ public class EditModel : PageModel
 
     private async Task<string> GuardarImagenAsync(IFormFile imagen)
     {
-        var carpeta = Path.Combine(
-            _environment.WebRootPath,
-            "uploads",
-            "productos");
+        await using var stream = imagen.OpenReadStream();
 
-        Directory.CreateDirectory(carpeta);
-
-        var extension = Path.GetExtension(imagen.FileName)
-            .ToLowerInvariant();
-
-        var nombreArchivo = $"{Guid.NewGuid()}{extension}";
-        var rutaCompleta = Path.Combine(carpeta, nombreArchivo);
-
-        await using var stream = new FileStream(
-            rutaCompleta,
-            FileMode.Create);
-
-        await imagen.CopyToAsync(stream);
-
-        return $"/uploads/productos/{nombreArchivo}";
-    }
-
-    private void EliminarImagen(string? imagenUrl)
-    {
-        if (string.IsNullOrWhiteSpace(imagenUrl))
+        var parametrosSubida = new ImageUploadParams
         {
-            return;
+            File = new FileDescription(imagen.FileName, stream),
+            Folder = "ferreteria/productos"
+        };
+
+        var resultado = await _cloudinary.UploadAsync(parametrosSubida);
+
+        if (resultado.Error is not null)
+        {
+            throw new InvalidOperationException(
+                $"No se pudo subir la imagen a Cloudinary: {resultado.Error.Message}");
         }
 
-        var rutaRelativa = imagenUrl
-            .TrimStart('/')
-            .Replace('/', Path.DirectorySeparatorChar);
-
-        var rutaCompleta = Path.Combine(
-            _environment.WebRootPath,
-            rutaRelativa);
-
-        if (System.IO.File.Exists(rutaCompleta))
-        {
-            System.IO.File.Delete(rutaCompleta);
-        }
+        return resultado.SecureUrl.ToString();
     }
 }
