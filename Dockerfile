@@ -24,6 +24,12 @@ WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV PORT=8080
 
+# Render (y otros contenedores livianos) tienen un límite bajo de
+# inotify watchers; sin esto, el host intenta vigilar cambios en
+# appsettings.json con un FileSystemWatcher y la app crashea al
+# arrancar con "configured user limit on inotify instances reached".
+ENV DOTNET_hostBuilder__reloadConfigOnChange=false
+
 EXPOSE 8080
 
 COPY --from=build /app/publish .
