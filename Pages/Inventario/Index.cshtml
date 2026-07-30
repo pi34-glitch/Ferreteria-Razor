@@ -184,7 +184,6 @@
                             <th>Sucursal</th>
                             <th>Stock</th>
                             <th>Stock mínimo</th>
-                            <th>Estado</th>
                             <th>Actualización</th>
                             <th class="text-end">Acciones</th>
                         </tr>
@@ -229,48 +228,7 @@
                                 </td>
 
                                 <td>
-                                    @if (inventario.Stock == 0)
-                                    {
-                                        <form method="post"
-                                            asp-page-handler="Retirar"
-                                            class="d-inline">
-
-                                            <input type="hidden"
-                                                name="id"
-                                                value="@inventario.Id" />
-
-                                            <input type="hidden"
-                                                name="sucursalId"
-                                                value="@Model.SucursalId" />
-
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('¿Deseas retirar este producto de la sucursal? El producto continuará existiendo en el catálogo.');">
-
-                                                <i class="bi bi-box-arrow-up"></i>
-                                                Retirar
-
-                                            </button>
-
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-secondary"
-                                                disabled
-                                                title="El stock debe estar en cero para retirar el producto">
-
-                                            <i class="bi bi-box-arrow-up"></i>
-                                            Retirar
-
-                                        </button>
-                                    }
-                                </td>
-
-                                <td>
-                                    @inventario.FechaActualizacion.ToLocalTime()
-                                        .ToString("dd/MM/yyyy HH:mm")
+                                    @(inventario.FechaActualizacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))
                                 </td>
 
                                 <td class="text-end">
@@ -283,44 +241,6 @@
                                         Editar
 
                                     </a>
-
-                                    @if (inventario.Stock == 0)
-                                    {
-                                        <form method="post"
-                                            asp-page-handler="Retirar"
-                                            class="d-inline">
-
-                                            <input type="hidden"
-                                                name="id"
-                                                value="@inventario.Id" />
-
-                                            <input type="hidden"
-                                                name="sucursalId"
-                                                value="@Model.SucursalId" />
-
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('¿Deseas retirar este producto de la sucursal? El producto continuará existiendo en el catálogo.');">
-
-                                                <i class="bi bi-box-arrow-up"></i>
-                                                Retirar
-
-                                            </button>
-
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-secondary"
-                                                disabled
-                                                title="El stock debe estar en cero para retirar el producto">
-
-                                            <i class="bi bi-box-arrow-up"></i>
-                                            Retirar
-
-                                        </button>
-                                    }
 
                                 </td>
 

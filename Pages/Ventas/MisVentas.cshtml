@@ -136,15 +136,11 @@
 
                                 <td>
                                     <div>
-                                        @venta.Fecha
-                                            .ToLocalTime()
-                                            .ToString("dd/MM/yyyy")
+                                        @(venta.Fecha.ToLocalTime().ToString("dd/MM/yyyy"))
                                     </div>
 
                                     <small class="text-muted">
-                                        @venta.Fecha
-                                            .ToLocalTime()
-                                            .ToString("HH:mm")
+                                        @(venta.Fecha.ToLocalTime().ToString("HH:mm"))
                                     </small>
                                 </td>
 
