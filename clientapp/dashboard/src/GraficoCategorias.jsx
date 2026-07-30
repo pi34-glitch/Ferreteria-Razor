@@ -2,11 +2,12 @@ import React, { useEffect, useRef } from "react";
 import {
   Chart,
   ArcElement,
+  DoughnutController,
   Tooltip,
   Legend
 } from "chart.js";
 
-Chart.register(ArcElement, Tooltip, Legend);
+Chart.register(ArcElement, DoughnutController, Tooltip, Legend);
 
 const COLORES = [
   "#f97316",

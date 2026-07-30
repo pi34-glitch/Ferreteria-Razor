@@ -250,9 +250,7 @@
                                     </td>
 
                                     <td>
-                                        @producto.FechaRegistro
-                                            .ToLocalTime()
-                                            .ToString("dd/MM/yyyy")
+                                        @(producto.FechaRegistro.ToLocalTime().ToString("dd/MM/yyyy"))
                                     </td>
 
                                     <td class="text-end">
