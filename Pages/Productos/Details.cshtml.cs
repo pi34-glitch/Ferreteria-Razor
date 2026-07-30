@@ -52,6 +52,22 @@ public class DetailsModel : PageModel
             usuarioActual,
             "Gerente");
 
+        var producto = await _context.Productos
+            .AsNoTracking()
+            .Include(p => p.Categoria)
+            .Include(p => p.Marca)
+            .Include(p => p.Distribuidora)
+            .Include(p => p.InventariosSucursales)
+                .ThenInclude(i => i.Sucursal)
+            .FirstOrDefaultAsync(p => p.Id == id.Value);
+
+        if (producto is null)
+        {
+            return NotFound();
+        }
+
+        Producto = producto;
+
         if (EsAdministrador)
         {
             InventariosVisibles = Producto.InventariosSucursales
@@ -77,22 +93,6 @@ public class DetailsModel : PageModel
                 return NotFound();
             }
         }
-
-        var producto = await _context.Productos
-            .AsNoTracking()
-            .Include(p => p.Categoria)
-            .Include(p => p.Marca)
-            .Include(p => p.Distribuidora)
-            .Include(p => p.InventariosSucursales)
-                .ThenInclude(i => i.Sucursal)
-            .FirstOrDefaultAsync(p => p.Id == id.Value);
-
-        if (producto is null)
-        {
-            return NotFound();
-        }
-
-        Producto = producto;
 
         return Page();
     }
