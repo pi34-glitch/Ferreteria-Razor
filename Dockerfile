@@ -22,10 +22,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_URLS=http://+:8080
+ENV PORT=8080
 
 EXPOSE 8080
 
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["dotnet", "Ferreteria.dll"]
+# Render inyecta la variable PORT en tiempo de ejecución; el
+# entrypoint arma la URL de escucha dinámicamente en vez de
+# depender de un puerto fijo en el build.
+ENTRYPOINT ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT} dotnet Ferreteria.dll"]
