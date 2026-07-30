@@ -699,6 +699,32 @@ textarea.form-control {
     color: #ffffff !important;
 }
 
+/*
+ * Usada por los botones "Agregar producto/marca/distribuidora"
+ * (dropdown-toggle) en Inventario, Marcas y Distribuidoras.
+ * No estaba definida en ningún lado, así que se renderizaba
+ * sin estilo (botón gris por defecto del navegador).
+ */
+.btn-primary-ferreteria {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 17px;
+    border: 1px solid var(--primary);
+    border-radius: 11px;
+    background: var(--primary);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 7px 15px rgba(249, 115, 22, 0.18);
+}
+
+.btn-primary-ferreteria:hover,
+.btn-primary-ferreteria:focus {
+    border-color: var(--primary-dark);
+    background: var(--primary-dark);
+    color: #ffffff;
+}
+
 /* RESPONSIVE */
 
 .sidebar-overlay {
