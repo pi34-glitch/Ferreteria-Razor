@@ -59,10 +59,43 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
+        /*
+         * DetalleVenta -> Producto usa DeleteBehavior.Restrict para
+         * no perder el historial de ventas. Si el producto ya fue
+         * vendido alguna vez, no se puede eliminar.
+         */
+        var tieneVentas = await _context.DetallesVenta
+            .AsNoTracking()
+            .AnyAsync(d => d.ProductoId == producto.Id);
+
+        if (tieneVentas)
+        {
+            TempData["MensajeError"] =
+                "No se puede eliminar el producto porque tiene ventas registradas. " +
+                "Puedes desactivarlo desde la edición del producto.";
+
+            return RedirectToPage("./Index");
+        }
+
         var imagenUrl = producto.ImagenUrl;
 
+        await using var transaccion =
+            await _context.Database.BeginTransactionAsync();
+
+        /*
+         * InventarioSucursal -> Producto también usa Restrict, así que
+         * hay que retirar el producto de todas las sucursales antes de
+         * poder eliminarlo.
+         */
+        var inventarios = await _context.InventariosSucursales
+            .Where(i => i.ProductoId == producto.Id)
+            .ToListAsync();
+
+        _context.InventariosSucursales.RemoveRange(inventarios);
         _context.Productos.Remove(producto);
+
         await _context.SaveChangesAsync();
+        await transaccion.CommitAsync();
 
         EliminarImagen(imagenUrl);
 
