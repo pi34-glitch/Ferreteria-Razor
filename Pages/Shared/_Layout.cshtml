@@ -200,10 +200,13 @@
                     User.IsInRole("Empleado"))
                 {
                     <a asp-page="/Ventas/MisVentas"
-                    class="nav-link">
+                    class="sidebar-link @(EsPagina("/Ventas/MisVentas") ? "active" : "")">
 
-                        <i class="bi bi-receipt-cutoff me-2"></i>
-                        Mis ventas
+                        <i class="bi bi-receipt-cutoff"></i>
+
+                        <span>
+                            Mis ventas
+                        </span>
 
                     </a>
                 }
