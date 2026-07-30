@@ -81,6 +81,17 @@ builder.Services.AddRazorPages(options =>
 });
 
 /*
+ * El carrito de "Nueva venta" (React) envía peticiones AJAX con el
+ * token antifalsificación en un header en vez de un campo de
+ * formulario; por defecto Razor Pages solo revisa el campo de
+ * formulario, así que hay que habilitar el header explícitamente.
+ */
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+});
+
+/*
  * Los modelos de EF Core (Producto, InventarioSucursal, etc.) tienen
  * propiedades de navegación no-nulables (ej. Producto.Categoria) que
  * los formularios nunca envían directamente (solo envían el Id).

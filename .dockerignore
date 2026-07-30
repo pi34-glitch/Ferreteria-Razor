@@ -1,6 +1,9 @@
 **/bin/
 **/obj/
 
+clientapp/**/node_modules/
+clientapp/**/dist/
+
 .git/
 .gitignore
 
