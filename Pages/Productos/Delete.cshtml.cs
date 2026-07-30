@@ -31,12 +31,12 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
-        var 
-        producto = await _context.Productos
+        var producto = await _context.Productos
             .AsNoTracking()
             .Include(p => p.Categoria)
             .Include(p => p.Marca)
             .Include(p => p.Distribuidora)
+            .Include(p => p.InventariosSucursales)
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (producto is null)
